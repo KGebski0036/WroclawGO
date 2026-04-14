@@ -27,24 +27,45 @@
       </article>
 
       <article class="dark-card avatar-view-card">
-        <p class="label">Avatar view</p>
-        <h2>Customizer Placeholder</h2>
-        <p>Future module for outfits, profile frame, and visual identity.</p>
+        <p class="label">Active skin</p>
+        <ng-container *ngIf="activeSkin$ | async as activeSkin; else noActiveSkin">
+          <div class="skin-preview" [style.background]="activeSkin.color_value"></div>
+          <h2>{{ activeSkin.name }}</h2>
+        </ng-container>
+        <ng-template #noActiveSkin>
+          <p>No active skin selected yet.</p>
+          <a routerLink="/your-avatar/shop">Choose a skin in the shop</a>
+        </ng-template>
       </article>
     </header>
 
     <section class="content-grid">
       <article class="panel">
         <div class="panel-head">
-          <h3>Planned map routes</h3>
-          <span>Placeholder</span>
+          <h3>Owned skin colors</h3>
+          <a routerLink="/your-avatar/shop">Browse skins</a>
         </div>
-        <ul>
-          <li *ngFor="let trip of plannedTrips">
-            <strong>{{ trip.name }}</strong>
-            <span>{{ trip.eta }} | +{{ trip.points }} pts</span>
-          </li>
-        </ul>
+
+        <div class="skin-grid" *ngIf="currentUser.owned_skins.length; else noOwnedSkins">
+          <ng-container *ngIf="activeSkin$ | async as activeSkin">
+            <article class="skin-card" *ngFor="let skin of currentUser.owned_skins">
+              <div class="shop-swatch" [style.background]="skin.color_value"></div>
+              <strong>{{ skin.name }}</strong>
+              <button
+                type="button"
+                [disabled]="selectingSkin || activeSkin?.id === skin.id"
+                (click)="selectSkin(skin.id)">
+                {{ activeSkin?.id === skin.id ? 'Selected' : 'Select' }}
+              </button>
+            </article>
+          </ng-container>
+        </div>
+
+        <ng-template #noOwnedSkins>
+          <p>You do not own any avatar skins yet. Visit the shop to purchase a new color.</p>
+        </ng-template>
+
+        <div *ngIf="skinError" class="error-message">{{ skinError }}</div>
       </article>
 
       <article class="panel">
@@ -63,36 +84,13 @@
       <article class="panel actions-panel">
         <div class="panel-head">
           <h3>Modules</h3>
-          <span>Future tools</span>
+          <span>Quick actions</span>
         </div>
         <div class="module-links">
-          <a routerLink="/your-avatar/shop">Shop placeholder</a>
-          <a routerLink="/your-avatar/achievements">Achievements placeholder</a>
-          <a routerLink="/your-avatar/visited">Visited attractions placeholder</a>
+          <a routerLink="/your-avatar/shop">Shop</a>
+          <a routerLink="/your-avatar/achievements">Achievements</a>
+          <a routerLink="/your-avatar/visited">Visited attractions</a>
         </div>
-      </article>
-
-      <article class="panel">
-        <div class="panel-head">
-          <h3>Visited attractions</h3>
-          <a routerLink="/your-avatar/visited">Open full list</a>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Date</th>
-              <th>Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of visitedPreview">
-              <td>{{ item.name }}</td>
-              <td>{{ item.date }}</td>
-              <td>+{{ item.points }}</td>
-            </tr>
-          </tbody>
-        </table>
       </article>
     </section>
   </div>

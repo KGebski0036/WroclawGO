@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { map } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { ShopService } from '../../services/shop.service';
+import { AuthUser } from '../../models/auth.model';
 
 @Component({
   selector: 'app-avatar-placeholder',
@@ -12,7 +15,12 @@ import { AuthService } from '../../services/auth.service';
 })
 export class AvatarPlaceholderComponent {
   private readonly authService = inject(AuthService);
+  private readonly shopService = inject(ShopService);
+
   readonly currentUser$ = this.authService.currentUser$;
+  readonly activeSkin$ = this.currentUser$.pipe(map((user) => this.getActiveSkinFromUser(user)));
+  selectingSkin = false;
+  skinError: string | null = null;
 
   readonly plannedTrips = [
     { name: 'Old Town route', eta: 'Tomorrow', points: 35 },
@@ -63,5 +71,37 @@ export class AvatarPlaceholderComponent {
     }
 
     return 'Rookie Traveler';
+  }
+
+  private getActiveSkinFromUser(user: AuthUser | null): AuthUser['selected_skin'] | null {
+    if (!user) {
+      return null;
+    }
+
+    if (user.selected_skin) {
+      return user.selected_skin;
+    }
+
+    return user.owned_skins.find((skin) => skin.name === 'Golden Aura') ?? null;
+  }
+
+  isOwned(user: AuthUser, skinId: number): boolean {
+    return user.owned_skins.some((skin) => skin.id === skinId);
+  }
+
+  selectSkin(skinId: number): void {
+    this.selectingSkin = true;
+    this.skinError = null;
+
+    this.shopService.selectSkin(skinId).subscribe({
+      next: () => {
+        this.authService.fetchCurrentUser().subscribe();
+        this.selectingSkin = false;
+      },
+      error: (error) => {
+        this.skinError = error.error?.detail || 'Unable to select this skin.';
+        this.selectingSkin = false;
+      }
+    });
   }
 }

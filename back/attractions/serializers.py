@@ -2,19 +2,26 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from .models import Attraction, Category, User
+from .models import Attraction, Category, SkinColor, User, VisitedAttraction
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
 
+class SkinColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SkinColor
+        fields = ['id', 'name', 'color_value', 'price', 'image_file_name', 'is_premium']
+
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
+    owned_skins = SkinColorSerializer(many=True, read_only=True)
+    selected_skin = SkinColorSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'points', 'profile_picture']
+        fields = ['id', 'username', 'email', 'points', 'profile_picture', 'owned_skins', 'selected_skin']
 
     def get_profile_picture(self, obj):
         request = self.context.get('request')
@@ -95,3 +102,10 @@ class AttractionSerializer(GeoFeatureModelSerializer):
         model = Attraction
         geo_field = "location"
         fields = ("id", "name", "description", "category", "points_reward")
+
+class VisitedAttractionSerializer(serializers.ModelSerializer):
+    attraction = AttractionSerializer(read_only=True)
+
+    class Meta:
+        model = VisitedAttraction
+        fields = ['id', 'attraction', 'visited_at']

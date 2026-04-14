@@ -1,9 +1,13 @@
+import { SkinColor } from './skin-color.model';
+
 export interface AuthUser {
   id: number;
   username: string;
   email: string;
   points: number;
   profile_picture: string | null;
+  owned_skins: SkinColor[];
+  selected_skin: SkinColor | null;
 }
 
 export interface AuthResponse {

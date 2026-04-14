@@ -1,26 +1,88 @@
-<section class="module-page">
-  <div class="module-card">
-    <p class="eyebrow">Avatar Module</p>
-    <h1>Shop Placeholder</h1>
-    <p>
-      Future avatar shop for cosmetics, accessories, and seasonal rewards purchased with game points.
-    </p>
+<section class="avatar-shop-page">
+  <div class="shop-shell">
+    <div class="shop-header">
+      <div class="shop-header-copy">
+        <p class="eyebrow">Avatar Shop</p>
+        <h1>Premium Skin Colors</h1>
+        <p class="intro">
+          Spend your points on polished avatar skins and upgrade your avatar with premium cosmetic previews.
+          Owned skins can be selected instantly and the active skin is highlighted here.
+        </p>
+      </div>
 
-    <div class="module-grid">
-      <article>
-        <h2>Outfits</h2>
-        <p>Future category for jacket, hat, and explorer-themed sets.</p>
-      </article>
-      <article>
-        <h2>Accessories</h2>
-        <p>Future badges, frames, and map-themed collectibles.</p>
-      </article>
-      <article>
-        <h2>Pricing</h2>
-        <p>Prices will be linked to points and player level requirements.</p>
-      </article>
+      <div class="points-panel" *ngIf="currentUser$ | async as currentUser">
+        <span class="points-label">Available points</span>
+        <strong>{{ currentUser.points }}</strong>
+      </div>
     </div>
 
-    <a routerLink="/your-avatar">Back to avatar dashboard</a>
+    <div class="status-row" *ngIf="currentUser$ | async as currentUser">
+      <div class="status-card">
+        <span class="status-title">Active skin</span>
+        <span class="status-value">
+          {{ skinColors.length ? activeSkinName() : (loading ? 'Loading active skin...' : 'No active skin selected yet') }}
+        </span>
+      </div>
+      <div class="status-card status-card-soft">
+        <span class="status-title">Owned skins</span>
+        <span class="status-value">{{ ownedSkinCount() }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="notification error-notice">{{ errorMessage }}</div>
+    <div *ngIf="loading" class="notification loading-notice">Loading skin colors...</div>
+
+    <ng-container *ngIf="!loading">
+      <div class="shop-grid" *ngIf="currentUser$ | async as currentUser">
+        <article
+          *ngFor="let skin of skinColors"
+          class="shop-card"
+          [class.shop-card--active]="isActive(skin)"
+          [class.shop-card--locked]="!canAfford(currentUser, skin) && !isOwned(skin)">
+
+          <!-- Image section -->
+          <div class="shop-card__image-wrapper">
+            <img
+              [src]="getSkinImageUrl(skin)"
+              [alt]="skin.name + ' avatar skin preview'"
+              class="shop-card__image"
+              loading="lazy"
+              onerror="this.src='/assets/avatar-skins/placeholder.png'"
+            />
+          </div>
+
+          <!-- Content section -->
+          <div class="shop-card__body">
+            <div class="shop-card__header">
+              <div class="shop-card__title-block">
+                <h2 class="shop-card__title">{{ skin.name }}</h2>
+              </div>
+              <span class="shop-card__badge" [ngClass]="badgeClass(skin)">
+                {{ badgeLabel(skin) }}
+              </span>
+            </div>
+
+            <p class="shop-card__price">
+              <span>{{ skin.price }}</span>
+              <span class="shop-card__price-unit">points</span>
+            </p>
+          </div>
+
+          <!-- Action section -->
+          <button
+            type="button"
+            class="shop-card__action"
+            [ngClass]="buttonClass(currentUser, skin)"
+            [disabled]="buttonDisabled(currentUser, skin)"
+            (click)="onPrimaryAction(currentUser, skin)">
+            {{ buttonLabel(currentUser, skin) }}
+          </button>
+        </article>
+      </div>
+    </ng-container>
+
+    <div class="shop-footer">
+      <a routerLink="/your-avatar" class="shop-back-link">Back to avatar dashboard</a>
+    </div>
   </div>
 </section>

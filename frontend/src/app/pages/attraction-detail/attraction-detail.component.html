@@ -7,6 +7,13 @@
       user tips, and quest-based interactions.
     </p>
 
+    <div class="visit-control">
+      <p>Mark this attraction as visited to earn reward points.</p>
+      <button type="button" (click)="markVisited(+attractionId)">Mark as visited</button>
+      <p class="success-message" *ngIf="visitMessage">{{ visitMessage }}</p>
+      <p class="error-message" *ngIf="visitError">{{ visitError }}</p>
+    </div>
+
     <div class="placeholder-grid">
       <article>
         <h2>Overview</h2>

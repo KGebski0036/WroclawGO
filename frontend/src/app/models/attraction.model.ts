@@ -1,4 +1,4 @@
-export interface AttractionProperties {
+﻿export interface AttractionProperties {
   id: number;
   name: string;
   description: string;
@@ -20,4 +20,10 @@ export interface AttractionFeature {
 export interface AttractionGeoJSON {
   type: 'FeatureCollection';
   features: AttractionFeature[];
+}
+
+export interface VisitedAttraction {
+  id: number;
+  attraction: AttractionProperties;
+  visited_at: string;
 }

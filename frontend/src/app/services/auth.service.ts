@@ -3,6 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '../models/auth.model';
+import { SkinColor } from '../models/skin-color.model';
+
+const DEFAULT_SKIN_NAME = 'Golden Aura';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +19,7 @@ export class AuthService {
   private readonly userSubject = new BehaviorSubject<AuthUser | null>(null);
 
   readonly currentUser$ = this.userSubject.asObservable();
+  readonly activeSkin$ = this.currentUser$.pipe(map((user) => this.getActiveSkinFromUser(user)));
 
   initializeAuth(): void {
     if (!this.getAccessToken()) {
@@ -61,7 +65,7 @@ export class AuthService {
 
   fetchCurrentUser(): Observable<AuthUser> {
     return this.http.get<AuthUser>(`${this.apiUrl}/me/`).pipe(
-      tap((user) => this.userSubject.next(user))
+      tap((user) => this.userSubject.next(this.normalizeUserSkins(user)))
     );
   }
 
@@ -94,6 +98,59 @@ export class AuthService {
     return this.userSubject.value;
   }
 
+  updateCurrentUser(user: AuthUser): void {
+    this.userSubject.next(this.normalizeUserSkins(user));
+  }
+
+  private normalizeUserSkins(user: AuthUser): AuthUser {
+    const defaultSkin: SkinColor = {
+      id: -1,
+      name: DEFAULT_SKIN_NAME,
+      color_value: '#f7d455',
+      price: 0,
+      image_file_name: 'golden-aura.png'
+    };
+
+    const ownedSkins = [...user.owned_skins];
+    const ownedSkinNames = new Set(ownedSkins.map((skin) => skin.name));
+    const ownedSkinIds = new Set(ownedSkins.map((skin) => skin.id));
+
+    if (!ownedSkinNames.has(DEFAULT_SKIN_NAME)) {
+      ownedSkins.push(defaultSkin);
+      ownedSkinNames.add(DEFAULT_SKIN_NAME);
+      ownedSkinIds.add(defaultSkin.id);
+    }
+
+    let selectedSkin = user.selected_skin;
+
+    if (!selectedSkin) {
+      selectedSkin = ownedSkins.find((skin) => skin.name === DEFAULT_SKIN_NAME) ?? defaultSkin;
+    }
+
+    if (selectedSkin && !ownedSkinIds.has(selectedSkin.id)) {
+      ownedSkins.push(selectedSkin);
+    }
+
+    return {
+      ...user,
+      owned_skins: ownedSkins,
+      selected_skin: selectedSkin as any
+    };
+  }
+
+  private getActiveSkinFromUser(user: AuthUser | null): AuthUser['selected_skin'] | null {
+    if (!user) {
+      return null;
+    }
+
+    if (user.selected_skin) {
+      return user.selected_skin;
+    }
+
+    const defaultSkin = user.owned_skins.find((skin) => skin.name === DEFAULT_SKIN_NAME);
+    return defaultSkin ?? null;
+  }
+
   clearSession(): void {
     localStorage.removeItem(this.accessTokenKey);
     localStorage.removeItem(this.refreshTokenKey);
@@ -107,6 +164,6 @@ export class AuthService {
   private setSession(response: AuthResponse): void {
     localStorage.setItem(this.accessTokenKey, response.access);
     localStorage.setItem(this.refreshTokenKey, response.refresh);
-    this.userSubject.next(response.user);
+    this.userSubject.next(this.normalizeUserSkins(response.user));
   }
 }
