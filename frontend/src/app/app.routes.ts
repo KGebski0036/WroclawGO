@@ -20,7 +20,9 @@ export const routes: Routes = [
 		canActivate: [authGuard],
 		children: [
 			{ path: '', component: AvatarPlaceholderComponent },
-			{ path: 'shop', component: AvatarShopComponent },
+			{ path: 'wardrobe', component: AvatarShopComponent },
+			{ path: 'customize', redirectTo: 'wardrobe', pathMatch: 'full' },
+			{ path: 'shop', redirectTo: 'wardrobe', pathMatch: 'full' },
 			{ path: 'achievements', component: AvatarAchievementsComponent },
 			{ path: 'visited', component: VisitedAttractionsComponent },
 		]

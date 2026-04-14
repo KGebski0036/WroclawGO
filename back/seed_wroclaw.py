@@ -6,7 +6,14 @@ import pandas as pd
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 django.setup()
 
-from attractions.models import Attraction, Category, User
+from attractions.models import (
+    Attraction,
+    AvatarItem,
+    Category,
+    User,
+    UserAvatarItem,
+    UserEquippedAvatarItem,
+)
 from django.contrib.gis.geos import Point
 
 POINTS_MAPPING = {
@@ -16,6 +23,37 @@ POINTS_MAPPING = {
     "Krasnal": 5,
     "Park": 10
 }
+
+AVATAR_ITEMS = [
+    {
+        "tag": "base",
+        "name": "Base Blue",
+        "svg_path": "avatars/base/base_blue.svg",
+        "cost": 0,
+        "is_default": True,
+    },
+    {
+        "tag": "base",
+        "name": "Base Red",
+        "svg_path": "avatars/base/base_red.svg",
+        "cost": 100,
+        "is_default": False,
+    },
+    {
+        "tag": "hat",
+        "name": "Hat One",
+        "svg_path": "avatars/hats/hat_one.svg",
+        "cost": 0,
+        "is_default": True,
+    },
+    {
+        "tag": "hat",
+        "name": "Hat Two",
+        "svg_path": "avatars/hats/hat_two.svg",
+        "cost": 0,
+        "is_default": True,
+    },
+]
 
 def get_or_create_category(name):
     category, created = Category.objects.get_or_create(name=name)
@@ -65,8 +103,39 @@ def create_admin_user():
     if not User.objects.filter(username="admin").exists():
         User.objects.create_superuser("admin", "admin@wroclaw.pl", "admin123")
 
+
+def seed_avatar_items():
+    for payload in AVATAR_ITEMS:
+        AvatarItem.objects.update_or_create(
+            tag=payload["tag"],
+            name=payload["name"],
+            defaults=payload,
+        )
+
+
+def sync_user_avatar_defaults():
+    defaults = list(AvatarItem.objects.filter(is_default=True).order_by("tag", "id"))
+
+    first_by_tag = {}
+    for item in defaults:
+        if item.tag not in first_by_tag:
+            first_by_tag[item.tag] = item
+
+    for user in User.objects.all().iterator():
+        for item in defaults:
+            UserAvatarItem.objects.get_or_create(user=user, item=item)
+
+        for tag, item in first_by_tag.items():
+            UserEquippedAvatarItem.objects.update_or_create(
+                user=user,
+                slot=tag,
+                defaults={"item": item},
+            )
+
 if __name__ == '__main__':
     create_admin_user()
+    seed_avatar_items()
+    sync_user_avatar_defaults()
     seed_attractions("./dataseed/museums.csv", "Muzeum")
     seed_attractions("./dataseed/zabytki.csv", "Zabytki")
     seed_attractions("./dataseed/kosciol.csv", "Kościół")

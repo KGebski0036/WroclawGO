@@ -1,100 +1,96 @@
 <section class="avatar-page">
   <div class="avatar-dashboard" *ngIf="currentUser$ | async as currentUser">
-    <header class="top-cards">
-      <article class="dark-card profile-card">
-        <div class="profile-head">
-          <span class="avatar-badge">{{ getInitials(currentUser.username) }}</span>
-          <div>
-            <h1>{{ currentUser.username }}</h1>
-            <p>{{ currentUser.email }}</p>
+    <div class="page-layout">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <article class="dark-card avatar-view-card">
+          <p class="label">Avatar view</p>
+          <h2>Current look</h2>
+          <p>Your currently equipped avatar customizations.</p>
+
+          <div class="avatar-preview" *ngIf="equippedItems$ | async as equippedItems">
+            <ng-container *ngIf="equippedItems.length; else emptyAvatar">
+              <img
+                *ngFor="let equipped of getOrderedEquippedItems(equippedItems)"
+                class="avatar-layer"
+                [src]="avatarService.toStaticUrl(equipped.item.svg_path)"
+                [alt]="equipped.item.name"
+                [ngStyle]="getLayerStyle(equipped.slot)"
+              />
+            </ng-container>
+            <ng-template #emptyAvatar>
+              <p class="avatar-empty">No equipped items yet.</p>
+            </ng-template>
           </div>
-        </div>
 
-        <div class="profile-meta">
-          <span>Points: {{ currentUser.points }}</span>
-          <span>{{ getStatusLabel(currentUser.points) }}</span>
-        </div>
-      </article>
+          <a class="change-avatar-btn" routerLink="/your-avatar/wardrobe">Change avatar</a>
+        </article>
 
-      <article class="dark-card level-card">
-        <p class="label">Avatar level</p>
-        <h2>Level {{ getLevel(currentUser.points) }}</h2>
-        <p>{{ getPointsToNextLevel(currentUser.points) }} points left to next level</p>
+        <article class="dark-card level-card">
+          <p class="label">Avatar level</p>
+          <h2>Level {{ getLevel(currentUser.points) }}</h2>
+          <p>{{ getPointsToNextLevel(currentUser.points) }} points left to next level</p>
+          <div class="level-track" aria-hidden="true">
+            <span [style.width.%]="getLevelProgress(currentUser.points)"></span>
+          </div>
+        </article>
+      </div>
 
-        <div class="level-track" aria-hidden="true">
-          <span [style.width.%]="getLevelProgress(currentUser.points)"></span>
-        </div>
-      </article>
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+        <article class="dark-card profile-card">
+          <div class="profile-head">
+            <span class="avatar-badge">{{ getInitials(currentUser.username) }}</span>
+            <div>
+              <h1>{{ currentUser.username }}</h1>
+              <p>{{ currentUser.email }}</p>
+            </div>
+          </div>
+          <div class="profile-meta">
+            <span>Points: {{ currentUser.points }}</span>
+            <span>{{ getStatusLabel(currentUser.points) }}</span>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-head">
+            <h3>Achievements preview</h3>
+            <a routerLink="/your-avatar/achievements">Open module</a>
+          </div>
+          <ul>
+            <li *ngFor="let item of achievements">
+              <strong>{{ item.name }}</strong>
+              <span>{{ item.detail }}</span>
+            </li>
+          </ul>
+        </article>
 
-      <article class="dark-card avatar-view-card">
-        <p class="label">Avatar view</p>
-        <h2>Customizer Placeholder</h2>
-        <p>Future module for outfits, profile frame, and visual identity.</p>
-      </article>
-    </header>
+        <article class="panel">
+          <div class="panel-head">
+            <h3>Visited attractions</h3>
+            <a routerLink="/your-avatar/visited">Open full list</a>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of visitedPreview">
+                <td>{{ item.name }}</td>
+                <td>{{ item.date }}</td>
+                <td>+{{ item.points }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
 
-    <section class="content-grid">
-      <article class="panel">
-        <div class="panel-head">
-          <h3>Planned map routes</h3>
-          <span>Placeholder</span>
-        </div>
-        <ul>
-          <li *ngFor="let trip of plannedTrips">
-            <strong>{{ trip.name }}</strong>
-            <span>{{ trip.eta }} | +{{ trip.points }} pts</span>
-          </li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <div class="panel-head">
-          <h3>Achievements preview</h3>
-          <a routerLink="/your-avatar/achievements">Open module</a>
-        </div>
-        <ul>
-          <li *ngFor="let item of achievements">
-            <strong>{{ item.name }}</strong>
-            <span>{{ item.detail }}</span>
-          </li>
-        </ul>
-      </article>
-
-      <article class="panel actions-panel">
-        <div class="panel-head">
-          <h3>Modules</h3>
-          <span>Future tools</span>
-        </div>
-        <div class="module-links">
-          <a routerLink="/your-avatar/shop">Shop placeholder</a>
-          <a routerLink="/your-avatar/achievements">Achievements placeholder</a>
-          <a routerLink="/your-avatar/visited">Visited attractions placeholder</a>
-        </div>
-      </article>
-
-      <article class="panel">
-        <div class="panel-head">
-          <h3>Visited attractions</h3>
-          <a routerLink="/your-avatar/visited">Open full list</a>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Date</th>
-              <th>Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of visitedPreview">
-              <td>{{ item.name }}</td>
-              <td>{{ item.date }}</td>
-              <td>+{{ item.points }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </article>
-    </section>
+    </div>
   </div>
 
   <div class="avatar-dashboard empty-state" *ngIf="!(currentUser$ | async)">

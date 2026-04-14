@@ -4,6 +4,21 @@ export interface AuthUser {
   email: string;
   points: number;
   profile_picture: string | null;
+  equipped_items?: AuthEquippedItem[];
+}
+
+export interface AuthEquippedItem {
+  id: number;
+  slot: string;
+  updated_at: string;
+  item: {
+    id: number;
+    tag: string;
+    name: string;
+    svg_path: string;
+    cost: number;
+    is_default: boolean;
+  };
 }
 
 export interface AuthResponse {
