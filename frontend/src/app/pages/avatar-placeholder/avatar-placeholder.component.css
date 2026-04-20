@@ -37,7 +37,7 @@
 .dark-card {
   border-radius: 14px;
   padding: 1rem 1.15rem;
-  background: linear-gradient(120deg, #1f232d 0%, #181d25 100%);
+  background: linear-gradient(120deg, #2b1f2d 0%, #181d25 100%);
   color: #f2f7ff;
   border: 1px solid rgba(77, 88, 103, 0.8);
   box-shadow: 0 14px 28px rgba(16, 27, 40, 0.22);
@@ -54,11 +54,10 @@
   margin-top: 1rem;
   width: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 320px;
   position: relative;
   border-radius: 12px;
   border: 1px solid rgba(99, 117, 139, 0.45);
-  background: radial-gradient(circle at 20% 15%, #2a3040, #151920 70%);
+  background: radial-gradient(circle at 20% 15%, #657fc7, #2b6bda 70%);
   overflow: hidden;
 }
 
@@ -83,6 +82,8 @@
 
 .change-avatar-btn {
   margin-top: auto;
+  margin-left: auto;
+  margin-right: auto;
   align-self: flex-start;
   display: inline-flex;
   align-items: center;

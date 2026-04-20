@@ -88,7 +88,7 @@ export class AvatarPlaceholderComponent {
 
   getLayerStyle(slot: string): Record<string, string> {
     const styleBySlot: Record<string, Record<string, string>> = {
-      base: { transform: 'translate(0, 0) scale(0.8)' },
+      base: { transform: 'translate(0, 0) scale(1)' },
       skin_color: { transform: 'translate(0, 0) scale(1)' },
       hat: { transform: 'translateY(-38%) scale(0.5)' },
       glasses: { transform: 'translateY(-2%) scale(1)' }
