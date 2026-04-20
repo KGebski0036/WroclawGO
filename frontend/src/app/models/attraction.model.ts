@@ -21,3 +21,9 @@ export interface AttractionGeoJSON {
   type: 'FeatureCollection';
   features: AttractionFeature[];
 }
+
+export interface VisitedAttraction {
+  id: number;
+  attraction: AttractionFeature;
+  visited_at: string;
+}

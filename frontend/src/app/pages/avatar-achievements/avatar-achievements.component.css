@@ -51,6 +51,64 @@ h1 {
   border-radius: 14px;
   padding: 0.95rem;
   background: rgba(247, 251, 255, 0.9);
+  transition: border-color 0.2s;
+}
+
+.badges-grid article.earned {
+  border-color: #3a9e6e;
+  background: rgba(240, 255, 248, 0.9);
+}
+
+.badges-grid article.locked {
+  opacity: 0.65;
+}
+
+.badge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.badge-icon {
+  font-size: 1.3rem;
+  color: #3a9e6e;
+}
+
+.badges-grid article.locked .badge-icon {
+  color: #9ab2c8;
+}
+
+.badge-points {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0f5d8c;
+}
+
+.earned-date {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.76rem;
+  color: #3a9e6e;
+  font-weight: 600;
+}
+
+.locked-label {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.76rem;
+  color: #9ab2c8;
+}
+
+.locked-desc {
+  margin: 0.55rem 0 0;
+  color: #4f667c;
+  line-height: 1.45;
+}
+
+.status-msg {
+  padding: 1rem 0;
+  color: #4d647a;
 }
 
 .badges-grid h2 {

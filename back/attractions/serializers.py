@@ -2,7 +2,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from .models import Attraction, AvatarItem, Category, User, UserAvatarItem, UserEquippedAvatarItem
+from .models import Attraction, Achievement, AvatarItem, Category, User, UserAchievement, UserAvatarItem, UserEquippedAvatarItem, VisitedAttraction
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,3 +122,25 @@ class UserEquippedAvatarItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserEquippedAvatarItem
         fields = ['id', 'slot', 'item', 'updated_at']
+
+
+class VisitedAttractionSerializer(serializers.ModelSerializer):
+    attraction = AttractionSerializer(read_only=True)
+
+    class Meta:
+        model = VisitedAttraction
+        fields = ['id', 'attraction', 'visited_at']
+
+
+class AchievementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Achievement
+        fields = ['id', 'name', 'description', 'badge_path', 'points_reward']
+
+
+class UserAchievementSerializer(serializers.ModelSerializer):
+    achievement = AchievementSerializer(read_only=True)
+
+    class Meta:
+        model = UserAchievement
+        fields = ['id', 'achievement', 'earned_at']

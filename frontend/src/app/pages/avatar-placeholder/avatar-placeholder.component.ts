@@ -1,9 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserEquippedAvatarItem } from '../../models/avatar.model';
+import { VisitedAttraction } from '../../models/attraction.model';
+import { UserAchievement } from '../../models/achievement.model';
 import { AvatarService } from '../../services/avatar.service';
 import { AuthService } from '../../services/auth.service';
+import { AttractionService } from '../../services/attraction.service';
+import { AchievementService } from '../../services/achievement.service';
 
 @Component({
   selector: 'app-avatar-placeholder',
@@ -12,11 +16,16 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './avatar-placeholder.component.html',
   styleUrl: './avatar-placeholder.component.css'
 })
-export class AvatarPlaceholderComponent {
+export class AvatarPlaceholderComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly attractionService = inject(AttractionService);
+  private readonly achievementService = inject(AchievementService);
   readonly avatarService = inject(AvatarService);
   readonly currentUser$ = this.authService.currentUser$;
   readonly equippedItems$ = this.avatarService.getEquippedItems();
+
+  visitedPreview: VisitedAttraction[] = [];
+  achievementsPreview: UserAchievement[] = [];
 
   readonly plannedTrips = [
     { name: 'Old Town route', eta: 'Tomorrow', points: 35 },
@@ -24,19 +33,16 @@ export class AvatarPlaceholderComponent {
     { name: 'Hidden courtyards', eta: 'Weekend', points: 40 }
   ];
 
-  readonly achievements = [
-    { name: 'First Steps', detail: 'Visited your first attraction' },
-    { name: 'Curious Explorer', detail: 'Read 5 attraction stories' },
-    { name: 'Route Builder', detail: 'Created 3 custom map routes' },
-    { name: 'Route Builder', detail: 'Created 3 custom map routes' }
-  ];
-
-  readonly visitedPreview = [
-    { name: 'Panorama of Raclawice', date: '2026-03-18', points: 20 },
-    { name: 'Wroclaw Market Square', date: '2026-03-19', points: 15 },
-    { name: 'Cathedral Island', date: '2026-03-24', points: 30 },
-    { name: 'Cathedral Island', date: '2026-03-24', points: 30 }
-  ];
+  ngOnInit(): void {
+    this.attractionService.getVisitedAttractions().subscribe({
+      next: (data) => { this.visitedPreview = data.slice(0, 4); },
+      error: () => { this.visitedPreview = []; }
+    });
+    this.achievementService.getEarnedAchievements().subscribe({
+      next: (data) => { this.achievementsPreview = data.slice(0, 4); },
+      error: () => { this.achievementsPreview = []; }
+    });
+  }
 
   getInitials(username: string): string {
     return username.slice(0, 2).toUpperCase();

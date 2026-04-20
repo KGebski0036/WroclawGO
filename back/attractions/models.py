@@ -74,6 +74,40 @@ class UserEquippedAvatarItem(models.Model):
         return f"{self.user.username} [{self.slot}] — {self.item.name}"
 
 
+class Achievement(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    badge_path = models.CharField(max_length=255)
+    points_reward = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
+class UserAchievement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='achievements')
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE, related_name='earners')
+    earned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'achievement')
+
+    def __str__(self):
+        return f"{self.user.username} — {self.achievement.name}"
+
+
+class VisitedAttraction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='visited_attractions')
+    attraction = models.ForeignKey(Attraction, on_delete=models.CASCADE, related_name='visited_by')
+    visited_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'attraction')
+
+    def __str__(self):
+        return f"{self.user.username} — {self.attraction.name}"
+
+
 @receiver(post_save, sender=User)
 def unlock_default_items(sender, instance, created, **kwargs):
     if created:
@@ -95,3 +129,10 @@ def unlock_default_items(sender, instance, created, **kwargs):
             ],
             ignore_conflicts=True,
         )
+
+
+@receiver(post_save, sender='attractions.VisitedAttraction')
+def on_visited_attraction_saved(sender, instance, created, **kwargs):
+    if created:
+        from .achievement_service import check_achievements
+        check_achievements(instance.user)

@@ -86,3 +86,38 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+.list-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid rgba(204, 217, 230, 0.6);
+  color: #2c445c;
+  font-size: 0.9rem;
+}
+
+.list-row:nth-child(even) {
+  background: rgba(239, 246, 255, 0.4);
+}
+
+.row-name {
+  font-weight: 600;
+}
+
+.btn-remove {
+  background: none;
+  border: 1px solid #c9d8e8;
+  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  color: #7a9ab8;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-remove:hover {
+  border-color: #e05555;
+  color: #e05555;
+}

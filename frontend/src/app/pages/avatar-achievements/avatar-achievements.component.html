@@ -1,27 +1,29 @@
 <section class="module-page">
   <div class="module-card">
     <p class="eyebrow">Avatar Module</p>
-    <h1>Achievements Placeholder</h1>
-    <p>
-      Future milestone system for exploration progress, challenge streaks, and hidden collectibles.
-    </p>
+    <h1>Achievements</h1>
+    <p>Milestones earned by exploring Wroc&#322;aw. Complete them to earn bonus points.</p>
 
-    <div class="badges-grid">
-      <article>
-        <h2>City Explorer</h2>
-        <p>Visit 10 attractions to unlock this badge.</p>
-      </article>
-      <article>
-        <h2>History Hunter</h2>
-        <p>Complete historical route stories to unlock.</p>
-      </article>
-      <article>
-        <h2>Night Walker</h2>
-        <p>Future event badge for evening city quests.</p>
-      </article>
-      <article>
-        <h2>Master Collector</h2>
-        <p>Collect all district-specific attraction stamps.</p>
+    <div *ngIf="loading" class="status-msg">Loading...</div>
+    <div *ngIf="error" class="status-msg">{{ error }}</div>
+
+    <div *ngIf="!loading && !error" class="badges-grid">
+      <article
+        *ngFor="let a of allAchievements"
+        [class.earned]="isEarned(a.id)"
+        [class.locked]="!isEarned(a.id)"
+      >
+        <div class="badge-header">
+          <span class="badge-icon">{{ isEarned(a.id) ? '&#9733;' : '&#128274;' }}</span>
+          <span class="badge-points">+{{ a.points_reward }} pts</span>
+        </div>
+        <h2>{{ a.name }}</h2>
+        <p *ngIf="isEarned(a.id)">{{ a.description }}</p>
+        <p *ngIf="!isEarned(a.id)" class="locked-desc">{{ a.description }}</p>
+        <span *ngIf="isEarned(a.id)" class="earned-date">
+          Earned {{ earnedDate(a.id) | date:'dd MMM yyyy' }}
+        </span>
+        <span *ngIf="!isEarned(a.id)" class="locked-label">Locked</span>
       </article>
     </div>
 

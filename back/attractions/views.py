@@ -3,16 +3,20 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Attraction, AvatarItem, UserAvatarItem, UserEquippedAvatarItem
+from .models import Achievement, Attraction, AvatarItem, UserAchievement, UserAvatarItem, UserEquippedAvatarItem, VisitedAttraction
 from .serializers import (
+    AchievementSerializer,
     AttractionSerializer,
     AvatarItemSerializer,
     LoginSerializer,
     RegisterSerializer,
+    UserAchievementSerializer,
     UserAvatarItemSerializer,
     UserEquippedAvatarItemSerializer,
     UserSerializer,
+    VisitedAttractionSerializer,
 )
+from .achievement_service import check_achievements
 
 class AttractionList(generics.ListAPIView):
     """
@@ -149,3 +153,69 @@ class EquipAvatarItemView(APIView):
         )
 
         return Response(UserEquippedAvatarItemSerializer(equipped).data, status=status.HTTP_200_OK)
+
+
+class VisitedAttractionListView(generics.ListAPIView):
+    serializer_class = VisitedAttractionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return VisitedAttraction.objects.filter(user=self.request.user).select_related('attraction').order_by('-visited_at')
+
+
+class MarkAttractionVisitedView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, attraction_id):
+        try:
+            attraction = Attraction.objects.get(pk=attraction_id)
+        except Attraction.DoesNotExist:
+            return Response({'detail': 'Attraction not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if VisitedAttraction.objects.filter(user=request.user, attraction=attraction).exists():
+            return Response({'detail': 'Attraction already marked as visited.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        visited = VisitedAttraction.objects.create(user=request.user, attraction=attraction)
+        request.user.points += attraction.points_reward
+        request.user.save(update_fields=['points'])
+
+        newly_earned = check_achievements(request.user)
+
+        return Response(
+            {
+                'visited': VisitedAttractionSerializer(visited).data,
+                'newly_earned': AchievementSerializer(newly_earned, many=True).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class UnmarkAttractionVisitedView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, attraction_id):
+        try:
+            visited = VisitedAttraction.objects.get(user=request.user, attraction_id=attraction_id)
+        except VisitedAttraction.DoesNotExist:
+            return Response({'detail': 'Visited record not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        points_to_deduct = visited.attraction.points_reward
+        visited.delete()
+        request.user.points = max(0, request.user.points - points_to_deduct)
+        request.user.save(update_fields=['points'])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AchievementListView(generics.ListAPIView):
+    queryset = Achievement.objects.all().order_by('id')
+    serializer_class = AchievementSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class UserAchievementListView(generics.ListAPIView):
+    serializer_class = UserAchievementSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return UserAchievement.objects.filter(user=self.request.user).select_related('achievement').order_by('-earned_at')

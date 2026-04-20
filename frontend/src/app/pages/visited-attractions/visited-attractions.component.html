@@ -1,19 +1,27 @@
 <section class="module-page">
   <div class="module-card">
-    <p class="eyebrow">Avatar Module</p>
-    <h1>Visited Attractions Placeholder</h1>
-    <p>
-      This page will become your travel journal with all visited places and reward history.
-    </p>
+    <p class="eyebrow">Travel Journal</p>
+    <h1>Visited Attractions</h1>
+    <p>All the places you have explored in Wrocław, along with your earned points.</p>
 
-    <div class="list-shell">
+    <div *ngIf="loading" class="list-empty">Loading...</div>
+    <div *ngIf="error" class="list-empty">{{ error }}</div>
+
+    <div *ngIf="!loading && !error" class="list-shell">
       <header>
         <span>Name</span>
         <span>Date visited</span>
         <span>Points earned</span>
       </header>
-      <div class="list-empty">
-        No visited attractions data yet. Future versions will include filters by category and district.
+
+      <div *ngIf="visitedAttractions.length === 0" class="list-empty">
+        You haven't visited any attractions yet. Start exploring Wrocław!
+      </div>
+
+      <div *ngFor="let v of visitedAttractions" class="list-row">
+        <span class="row-name">{{ v.attraction.properties.name }}</span>
+        <span>{{ v.visited_at | date:'dd MMM yyyy' }}</span>
+        <span>+{{ v.attraction.properties.points_reward }} pts</span>
       </div>
     </div>
 
