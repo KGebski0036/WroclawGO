@@ -110,29 +110,36 @@ class VisitedAttraction(models.Model):
 
 @receiver(post_save, sender=User)
 def unlock_default_items(sender, instance, created, **kwargs):
-    if created:
-        defaults = AvatarItem.objects.filter(is_default=True).order_by('tag', 'id')
-        UserAvatarItem.objects.bulk_create(
-            [UserAvatarItem(user=instance, item=item) for item in defaults],
-            ignore_conflicts=True,
-        )
+    if not created:
+        return
 
-        equipped_defaults = {}
-        for item in defaults:
-            if item.tag not in equipped_defaults:
-                equipped_defaults[item.tag] = item
+    defaults = list(AvatarItem.objects.filter(is_default=True).order_by('tag', 'id'))
 
-        UserEquippedAvatarItem.objects.bulk_create(
-            [
-                UserEquippedAvatarItem(user=instance, item=item, slot=item.tag)
-                for item in equipped_defaults.values()
-            ],
-            ignore_conflicts=True,
-        )
+    UserAvatarItem.objects.bulk_create(
+        [UserAvatarItem(user=instance, item=item) for item in defaults],
+        ignore_conflicts=True,
+    )
+
+    defaults_by_tag = {}
+    for item in defaults:
+        if item.tag == 'background' and item.name == 'Sky Background':
+            defaults_by_tag['background'] = item
+            continue
+
+        if item.tag not in defaults_by_tag:
+            defaults_by_tag[item.tag] = item
+
+    UserEquippedAvatarItem.objects.bulk_create(
+        [
+            UserEquippedAvatarItem(user=instance, item=item, slot=item.tag)
+            for item in defaults_by_tag.values()
+        ],
+        ignore_conflicts=True,
+    )
 
 
 @receiver(post_save, sender='attractions.VisitedAttraction')
 def on_visited_attraction_saved(sender, instance, created, **kwargs):
-    if created:
-        from .achievement_service import check_achievements
-        check_achievements(instance.user)
+    # Achievement check is handled directly in the visited view
+    # to avoid double evaluation.
+    return

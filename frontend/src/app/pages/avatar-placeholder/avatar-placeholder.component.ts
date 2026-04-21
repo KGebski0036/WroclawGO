@@ -21,23 +21,23 @@ export class AvatarPlaceholderComponent implements OnInit {
   private readonly attractionService = inject(AttractionService);
   private readonly achievementService = inject(AchievementService);
   readonly avatarService = inject(AvatarService);
+
   readonly currentUser$ = this.authService.currentUser$;
   readonly equippedItems$ = this.avatarService.getEquippedItems();
 
   visitedPreview: VisitedAttraction[] = [];
   achievementsPreview: UserAchievement[] = [];
 
-  readonly plannedTrips = [
-    { name: 'Old Town route', eta: 'Tomorrow', points: 35 },
-    { name: 'Island bridges walk', eta: 'In 3 days', points: 25 },
-    { name: 'Hidden courtyards', eta: 'Weekend', points: 40 }
-  ];
-
   ngOnInit(): void {
+    this.authService.fetchCurrentUser().subscribe({
+      error: () => {}
+    });
+
     this.attractionService.getVisitedAttractions().subscribe({
       next: (data) => { this.visitedPreview = data.slice(0, 4); },
       error: () => { this.visitedPreview = []; }
     });
+
     this.achievementService.getEarnedAchievements().subscribe({
       next: (data) => { this.achievementsPreview = data.slice(0, 4); },
       error: () => { this.achievementsPreview = []; }
@@ -78,28 +78,6 @@ export class AvatarPlaceholderComponent implements OnInit {
   }
 
   getOrderedEquippedItems(items: UserEquippedAvatarItem[]): UserEquippedAvatarItem[] {
-    const slotOrder: Record<string, number> = {
-      base: 0,
-      skin_color: 0,
-      hat: 10,
-      glasses: 20
-    };
-
-    return [...items].sort((a, b) => {
-      const left = slotOrder[a.slot] ?? 100;
-      const right = slotOrder[b.slot] ?? 100;
-      return left - right;
-    });
-  }
-
-  getLayerStyle(slot: string): Record<string, string> {
-    const styleBySlot: Record<string, Record<string, string>> = {
-      base: { transform: 'translate(0, 0) scale(1)' },
-      skin_color: { transform: 'translate(0, 0) scale(1)' },
-      hat: { transform: 'translateY(-38%) scale(0.5)' },
-      glasses: { transform: 'translateY(-2%) scale(1)' }
-    };
-
-    return styleBySlot[slot] ?? { transform: 'translate(0, 0) scale(1)' };
+    return this.avatarService.getSortedEquippedItems(items);
   }
 }

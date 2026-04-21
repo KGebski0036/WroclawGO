@@ -1,55 +1,58 @@
 <section class="module-page">
-  <div class="module-card" *ngIf="equippedItems$ | async as equippedItems">
+  <div class="module-card" *ngIf="vm$ | async as vm">
     <div class="card-head">
       <div>
-        <p class="eyebrow">Wardrobe Module</p>
-        <h1>Change your avatar</h1>
+        <p class="eyebrow">Shop Module</p>
+        <h1>Buy avatar items</h1>
+        <p class="sub-copy">Spend your earned points and unlock items for your constructor.</p>
       </div>
-      <a class="back-link" routerLink="/your-avatar">Back to avatar dashboard</a>
+      <div class="head-actions">
+        <span class="points-chip">Points: {{ vm.currentUser.points }}</span>
+        <a class="back-link" routerLink="/your-avatar">Back to avatar dashboard</a>
+      </div>
     </div>
 
-    <div class="customizer-layout">
-      <article class="preview-panel">
-        <h2>Current look</h2>
-        <div class="avatar-preview">
+    <p class="message success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="message error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <section class="tag-section" *ngFor="let section of vm.sections">
+      <div class="tag-head">
+        <h2>{{ section.label }}</h2>
+        <span>{{ section.items.length }} item(s)</span>
+      </div>
+
+      <div class="items-grid">
+        <article class="shop-item-card" *ngFor="let item of section.items">
           <img
-            *ngFor="let equipped of getOrderedEquippedItems(equippedItems)"
-            class="avatar-layer"
-            [src]="avatarService.toStaticUrl(equipped.item.svg_path)"
-            [alt]="equipped.item.name"
-            [ngStyle]="getLayerStyle(equipped.slot)"
+            class="item-preview"
+            [src]="avatarService.toStaticUrl(item.svg_path)"
+            [alt]="item.name"
           />
-        </div>
-      </article>
 
-      <article class="items-panel" *ngIf="groupedItems$ | async as groupedItems">
-        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+          <strong>{{ item.name }}</strong>
+          <span class="price">{{ item.cost }} pts</span>
 
-        <section class="tag-section" *ngFor="let entry of groupedItems | keyvalue">
-          <div class="tag-head">
-            <h3>{{ entry.key }}</h3>
-            <span>
-              Equipped:
-              {{ getEquippedItemNameForTag(entry.key, equippedItems) || 'none' }}
-            </span>
-          </div>
+          <span class="badge badge-default" *ngIf="item.is_default">Default</span>
+          <span class="badge badge-owned" *ngIf="!item.is_default && isOwned(item.id, vm.ownedIds)">Owned</span>
 
-          <div class="items-grid">
-            <button
-              type="button"
-              class="item-btn"
-              *ngFor="let item of entry.value"
-              [class.item-btn--equipped]="isEquipped(item, equippedItems)"
-              [disabled]="equippingItemId === item.id"
-              (click)="equipItem(item)"
-            >
-              <img [src]="avatarService.toStaticUrl(item.svg_path)" [alt]="item.name" />
-              <strong>{{ item.name }}</strong>
-              <span>{{ isEquipped(item, equippedItems) ? 'Equipped' : 'Click to equip' }}</span>
-            </button>
-          </div>
-        </section>
-      </article>
-    </div>
+          <button
+            type="button"
+            class="buy-btn"
+            [disabled]="
+              purchasingItemId === item.id ||
+              isOwned(item.id, vm.ownedIds) ||
+              vm.currentUser.points < item.cost
+            "
+            (click)="buyItem(item)"
+          >
+            {{
+              purchasingItemId === item.id
+                ? 'Buying...'
+                : getButtonLabel(item, vm.currentUser.points, vm.ownedIds)
+            }}
+          </button>
+        </article>
+      </div>
+    </section>
   </div>
 </section>

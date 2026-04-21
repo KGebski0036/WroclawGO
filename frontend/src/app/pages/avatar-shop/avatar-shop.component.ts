@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BehaviorSubject, catchError, map, of, switchMap, tap } from 'rxjs';
-import { AvatarItem, UserEquippedAvatarItem } from '../../models/avatar.model';
+import { BehaviorSubject, catchError, combineLatest, map, of, switchMap, tap } from 'rxjs';
+import { AvatarItem } from '../../models/avatar.model';
+import { AuthService } from '../../services/auth.service';
 import { AvatarService } from '../../services/avatar.service';
+
+type ShopSection = {
+  key: string;
+  label: string;
+  items: AvatarItem[];
+};
 
 @Component({
   selector: 'app-avatar-shop',
@@ -14,73 +21,89 @@ import { AvatarService } from '../../services/avatar.service';
 })
 export class AvatarShopComponent {
   readonly avatarService = inject(AvatarService);
+  private readonly authService = inject(AuthService);
 
   private readonly refresh$ = new BehaviorSubject<void>(void 0);
-  equippingItemId: number | null = null;
+
+  purchasingItemId: number | null = null;
   errorMessage = '';
+  successMessage = '';
 
-  readonly equippedItems$ = this.refresh$.pipe(
-    switchMap(() => this.avatarService.getEquippedItems())
+  private readonly slotConfig = [
+    { key: 'background', label: 'Background' },
+    { key: 'base', label: 'Base' },
+    { key: 'pants', label: 'Pants' },
+    { key: 'shirts', label: 'Shirts' },
+    { key: 'mouth', label: 'Mouth' },
+    { key: 'eyes', label: 'Eyes' },
+    { key: 'hair', label: 'Hair' },
+  ];
+
+  readonly vm$ = this.refresh$.pipe(
+    switchMap(() =>
+      combineLatest([
+        this.avatarService.getAllItems(),
+        this.avatarService.getUnlockedItems(),
+        this.authService.fetchCurrentUser(),
+      ])
+    ),
+    map(([allItems, unlockedItems, currentUser]) => {
+      const groupedAllItems = this.avatarService.groupItemsByTag(allItems);
+      const ownedIds = new Set(unlockedItems.map((item) => item.id));
+
+      const sections: ShopSection[] = this.slotConfig.map((slot) => ({
+        key: slot.key,
+        label: slot.label,
+        items: groupedAllItems[slot.key] ?? [],
+      }));
+
+      return {
+        sections,
+        ownedIds,
+        currentUser,
+      };
+    })
   );
 
-  readonly groupedItems$ = this.refresh$.pipe(
-    switchMap(() => this.avatarService.getUnlockedItems()),
-    map((items) => this.avatarService.groupItemsByTag(items))
-  );
-
-  equipItem(item: AvatarItem): void {
+  buyItem(item: AvatarItem): void {
     this.errorMessage = '';
-    this.equippingItemId = item.id;
+    this.successMessage = '';
+    this.purchasingItemId = item.id;
 
-    this.avatarService.equipItem(item.id).pipe(
-      tap(() => this.refresh$.next(void 0)),
-      catchError(() => {
-        this.errorMessage = 'Could not equip this item. Please try again.';
+    this.avatarService.purchaseItem(item.id).pipe(
+      switchMap(() => this.authService.fetchCurrentUser()),
+      tap(() => {
+        this.successMessage = `${item.name} has been added to your constructor.`;
+        this.refresh$.next(void 0);
+      }),
+      catchError((error) => {
+        this.errorMessage = error?.error?.detail || 'Could not buy this item.';
         return of(null);
       })
     ).subscribe({
       complete: () => {
-        this.equippingItemId = null;
+        this.purchasingItemId = null;
       }
     });
   }
 
-  isEquipped(item: AvatarItem, equippedItems: UserEquippedAvatarItem[]): boolean {
-    return equippedItems.some((equipped) => equipped.item.id === item.id);
+  isOwned(itemId: number, ownedIds: Set<number>): boolean {
+    return ownedIds.has(itemId);
   }
 
-  getEquippedItemNameForTag(tag: string, equippedItems: UserEquippedAvatarItem[]): string | null {
-    const equipped = equippedItems.find((entry) => entry.slot === tag);
-    return equipped ? equipped.item.name : null;
+  canBuy(item: AvatarItem, points: number, ownedIds: Set<number>): boolean {
+    return !ownedIds.has(item.id) && points >= item.cost;
   }
 
-  getOrderedEquippedItems(items: UserEquippedAvatarItem[]): UserEquippedAvatarItem[] {
-    const slotOrder: Record<string, number> = {
-      base: 0,
-      skin_color: 0,
-      hat: 10,
-      glasses: 20
-    };
+  getButtonLabel(item: AvatarItem, points: number, ownedIds: Set<number>): string {
+    if (ownedIds.has(item.id)) {
+      return 'Owned';
+    }
 
-    return [...items].sort((a, b) => {
-      const left = slotOrder[a.slot] ?? 100;
-      const right = slotOrder[b.slot] ?? 100;
-      return left - right;
-    });
-  }
+    if (points < item.cost) {
+      return 'Not enough points';
+    }
 
-  sortTags(a: string, b: string): number {
-    return a.localeCompare(b);
-  }
-
-  getLayerStyle(slot: string): Record<string, string> {
-    const styleBySlot: Record<string, Record<string, string>> = {
-      base: { transform: 'translate(0, 0) scale(1)' },
-      skin_color: { transform: 'translate(0, 0) scale(1)' },
-      hat: { transform: 'translateY(-45%) scale(0.3)' },
-      glasses: { transform: 'translateY(-2%) scale(1)' }
-    };
-
-    return styleBySlot[slot] ?? { transform: 'translate(0, 0) scale(1)' };
+    return 'Buy';
   }
 }

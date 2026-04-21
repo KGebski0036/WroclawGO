@@ -1,9 +1,17 @@
-# attractions/views.py
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Achievement, Attraction, AvatarItem, UserAchievement, UserAvatarItem, UserEquippedAvatarItem, VisitedAttraction
+
+from .models import (
+    Achievement,
+    Attraction,
+    AvatarItem,
+    UserAchievement,
+    UserAvatarItem,
+    UserEquippedAvatarItem,
+    VisitedAttraction,
+)
 from .serializers import (
     AchievementSerializer,
     AttractionSerializer,
@@ -18,10 +26,8 @@ from .serializers import (
 )
 from .achievement_service import check_achievements
 
+
 class AttractionList(generics.ListAPIView):
-    """
-    Widok zwracający listę wszystkich atrakcji w formacie GeoJSON.
-    """
     queryset = Attraction.objects.all()
     serializer_class = AttractionSerializer
     permission_classes = [permissions.AllowAny]
@@ -71,7 +77,10 @@ class LogoutView(APIView):
         refresh_token = request.data.get('refresh')
 
         if not refresh_token:
-            return Response({'detail': 'Refresh token is required for logout.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'detail': 'Refresh token is required for logout.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             token = RefreshToken(refresh_token)
@@ -90,7 +99,7 @@ class CurrentUserView(APIView):
 
 
 class AvatarItemListView(generics.ListAPIView):
-    queryset = AvatarItem.objects.all().order_by('tag', 'cost')
+    queryset = AvatarItem.objects.all().order_by('tag', 'cost', 'id')
     serializer_class = AvatarItemSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -120,8 +129,8 @@ class PurchaseAvatarItemView(APIView):
 
         request.user.points -= item.cost
         request.user.save(update_fields=['points'])
-        unlocked = UserAvatarItem.objects.create(user=request.user, item=item)
 
+        unlocked = UserAvatarItem.objects.create(user=request.user, item=item)
         return Response(UserAvatarItemSerializer(unlocked).data, status=status.HTTP_201_CREATED)
 
 
@@ -130,7 +139,12 @@ class UserEquippedAvatarItemListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return UserEquippedAvatarItem.objects.filter(user=self.request.user).select_related('item').order_by('slot')
+        return (
+            UserEquippedAvatarItem.objects
+            .filter(user=self.request.user)
+            .select_related('item')
+            .order_by('slot', 'id')
+        )
 
 
 class EquipAvatarItemView(APIView):
@@ -155,12 +169,39 @@ class EquipAvatarItemView(APIView):
         return Response(UserEquippedAvatarItemSerializer(equipped).data, status=status.HTTP_200_OK)
 
 
+class UnequipAvatarItemView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, slot):
+        protected_slots = {'base', 'background'}
+        if slot in protected_slots:
+            return Response(
+                {'detail': f'Items in slot "{slot}" cannot be removed.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        deleted_count, _ = UserEquippedAvatarItem.objects.filter(
+            user=request.user,
+            slot=slot,
+        ).delete()
+
+        if deleted_count == 0:
+            return Response({'detail': 'No equipped item found for this slot.'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class VisitedAttractionListView(generics.ListAPIView):
     serializer_class = VisitedAttractionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return VisitedAttraction.objects.filter(user=self.request.user).select_related('attraction').order_by('-visited_at')
+        return (
+            VisitedAttraction.objects
+            .filter(user=self.request.user)
+            .select_related('attraction')
+            .order_by('-visited_at')
+        )
 
 
 class MarkAttractionVisitedView(APIView):
@@ -173,9 +214,13 @@ class MarkAttractionVisitedView(APIView):
             return Response({'detail': 'Attraction not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         if VisitedAttraction.objects.filter(user=request.user, attraction=attraction).exists():
-            return Response({'detail': 'Attraction already marked as visited.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'detail': 'Attraction already marked as visited.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         visited = VisitedAttraction.objects.create(user=request.user, attraction=attraction)
+
         request.user.points += attraction.points_reward
         request.user.save(update_fields=['points'])
 
@@ -201,6 +246,7 @@ class UnmarkAttractionVisitedView(APIView):
 
         points_to_deduct = visited.attraction.points_reward
         visited.delete()
+
         request.user.points = max(0, request.user.points - points_to_deduct)
         request.user.save(update_fields=['points'])
 
@@ -218,4 +264,9 @@ class UserAchievementListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return UserAchievement.objects.filter(user=self.request.user).select_related('achievement').order_by('-earned_at')
+        return (
+            UserAchievement.objects
+            .filter(user=self.request.user)
+            .select_related('achievement')
+            .order_by('-earned_at')
+        )

@@ -1,0 +1,73 @@
+<section class="module-page">
+  <div class="module-card" *ngIf="vm$ | async as vm">
+    <div class="card-head">
+      <div>
+        <p class="eyebrow">Constructor Module</p>
+        <h1>Customize your avatar</h1>
+      </div>
+      <a class="back-link" routerLink="/your-avatar">Back to avatar dashboard</a>
+    </div>
+
+    <p class="message success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="message error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="customizer-layout">
+      <article class="preview-panel">
+        <h2>Current look</h2>
+        <div class="avatar-preview">
+          <img
+            *ngFor="let equipped of vm.sortedEquippedItems"
+            class="avatar-layer"
+            [src]="avatarService.toStaticUrl(equipped.item.svg_path)"
+            [alt]="equipped.item.name"
+          />
+        </div>
+      </article>
+
+      <article class="items-panel">
+        <section class="tag-section" *ngFor="let section of vm.sections">
+          <div class="tag-head">
+            <div>
+              <h3>{{ section.label }}</h3>
+              <span>
+                Equipped:
+                {{ getEquippedItemNameForTag(section.key, vm.equippedItems) || 'none' }}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="remove-btn"
+              *ngIf="canRemoveSlot(section.key)"
+              [disabled]="removingSlot === section.key"
+              (click)="removeSlot(section.key)"
+            >
+              {{ removingSlot === section.key ? 'Removing...' : 'Remove item' }}
+            </button>
+          </div>
+
+          <div class="items-grid" *ngIf="section.items.length > 0; else emptySection">
+            <button
+              type="button"
+              class="item-btn"
+              *ngFor="let item of section.items"
+              [class.item-btn--equipped]="isEquipped(item, vm.equippedItems)"
+              [disabled]="equippingItemId === item.id"
+              (click)="equipItem(item)"
+            >
+              <img [src]="avatarService.toStaticUrl(item.svg_path)" [alt]="item.name" />
+              <strong>{{ item.name }}</strong>
+              <span>{{ isEquipped(item, vm.equippedItems) ? 'Equipped' : 'Equip' }}</span>
+            </button>
+          </div>
+
+          <ng-template #emptySection>
+            <div class="empty-slot-state">
+              No owned items in this section yet.
+            </div>
+          </ng-template>
+        </section>
+      </article>
+    </div>
+  </div>
+</section>
