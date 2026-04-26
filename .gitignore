@@ -58,3 +58,6 @@ yarn-error.log*
 .aws/
 .elasticbeanstalk/
 .terraform/
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
