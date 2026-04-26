@@ -176,6 +176,16 @@ aws s3 cp "$BUILD_DIR/index.html" "s3://$S3_BUCKET/index.html" \
   --cache-control "no-cache, no-store, must-revalidate" \
   --content-type "text/html"
 
+log "=== PHASE 6: Updating Flutter mobile backend URL ==="
+MOBILE_CONFIG_FILE="mobile/lib/core/config/app_config.dart"
+
+if [ -f "$MOBILE_CONFIG_FILE" ]; then
+  sed -i -E "s|defaultValue: 'http://[^']+'|defaultValue: '${BACKEND_URL}'|g" "$MOBILE_CONFIG_FILE"
+  log "Flutter mobile backend URL updated in $MOBILE_CONFIG_FILE"
+else
+  log "Flutter mobile config file not found, skipping mobile backend URL update."
+fi
+
 log "=== Deployment Complete! ==="
 log "Frontend : $WEBSITE_URL"
 log "Backend  : $BACKEND_URL"

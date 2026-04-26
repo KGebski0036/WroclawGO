@@ -6,6 +6,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 django.setup()
 
 from attractions.models import (
+    Achievement,
     Attraction,
     AvatarItem,
     Category,
@@ -22,6 +23,69 @@ POINTS_MAPPING = {
     "Krasnal": 5,
     "Park": 10,
 }
+
+ACHIEVEMENTS = [
+    {
+        "name": "First Steps",
+        "description": "Visit your first attraction.",
+        "badge_path": "achievements/first_steps.svg",
+        "points_reward": 10,
+    },
+    {
+        "name": "Tourist",
+        "description": "Visit 4 attractions.",
+        "badge_path": "achievements/tourist.svg",
+        "points_reward": 20,
+    },
+    {
+        "name": "Explorer",
+        "description": "Visit 10 attractions.",
+        "badge_path": "achievements/explorer.svg",
+        "points_reward": 40,
+    },
+    {
+        "name": "Adventurer",
+        "description": "Visit 25 attractions.",
+        "badge_path": "achievements/adventurer.svg",
+        "points_reward": 80,
+    },
+    {
+        "name": "Traveler",
+        "description": "Visit 50 attractions.",
+        "badge_path": "achievements/traveler.svg",
+        "points_reward": 150,
+    },
+    {
+        "name": "Dwarf Hunter",
+        "description": "Visit 20 dwarfs around Wroclaw.",
+        "badge_path": "achievements/dwarf_hunter.svg",
+        "points_reward": 60,
+    },
+    {
+        "name": "Dwarf Master",
+        "description": "Visit all dwarfs in Wroclaw.",
+        "badge_path": "achievements/dwarf_master.svg",
+        "points_reward": 120,
+    },
+    {
+        "name": "Museum Enthusiast",
+        "description": "Visit 3 museums.",
+        "badge_path": "achievements/museum_enthusiast.svg",
+        "points_reward": 30,
+    },
+    {
+        "name": "Nature Walker",
+        "description": "Visit 3 parks.",
+        "badge_path": "achievements/nature_walker.svg",
+        "points_reward": 30,
+    },
+    {
+        "name": "Monument Hunter",
+        "description": "Visit 5 monuments.",
+        "badge_path": "achievements/monument_hunter.svg",
+        "points_reward": 50,
+    },
+]
 
 AVATAR_ITEMS = [
     {
@@ -381,8 +445,17 @@ def sync_user_avatar_defaults():
             )
 
 
+def seed_achievements():
+    for payload in ACHIEVEMENTS:
+        Achievement.objects.update_or_create(
+            name=payload["name"],
+            defaults=payload,
+        )
+
+
 if __name__ == '__main__':
     create_admin_user()
+    seed_achievements()
     seed_avatar_items()
     sync_user_avatar_defaults()
 
