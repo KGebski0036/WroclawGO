@@ -3,18 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AttractionGeoJSON, VisitedAttraction } from '../models/attraction.model';
 import { Achievement } from '../models/achievement.model';
+import { API_URL } from '../config/api.config';
 
 export interface MarkVisitedResponse {
   visited: VisitedAttraction;
   newly_earned: Achievement[];
+  awarded_points: number;
+  current_points: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AttractionService {
-  private apiUrl = 'http://localhost:8000/api/attractions/';
-  private visitedUrl = 'http://localhost:8000/api/visited/';
+  private apiUrl = `${API_URL}/attractions/`;
+  private visitedUrl = `${API_URL}/visited/`;
 
   constructor(private http: HttpClient) { }
 

@@ -1,0 +1,69 @@
+<section class="profile-page">
+  <div class="profile-card">
+    <a class="back-link" routerLink="/ranking">Back to ranking</a>
+
+    <div *ngIf="loading" class="state">Loading profile...</div>
+    <div *ngIf="error" class="state error">{{ error }}</div>
+
+    <ng-container *ngIf="!loading && !error && profile as user">
+      <header class="profile-header">
+        <div class="avatar-preview" *ngIf="user.equipped_items.length > 0">
+          <img
+            *ngFor="let equipped of getOrderedEquippedItems(user.equipped_items)"
+            class="avatar-layer"
+            [src]="avatarService.toStaticUrl(equipped.item.svg_path)"
+            [alt]="equipped.item.name"
+          />
+        </div>
+
+        <div>
+          <div class="name-row">
+            <h1>{{ user.username }}</h1>
+            <button
+              *ngIf="!isSelfProfile"
+              type="button"
+              class="heart-btn"
+              [class.is-liked]="user.is_liked"
+              [disabled]="likePending"
+              (click)="toggleFavorite()"
+              [attr.aria-label]="user.is_liked ? 'Remove from liked users' : 'Add to liked users'"
+              [title]="user.is_liked ? 'Unlike user' : 'Like user'"
+            >
+              <span aria-hidden="true">{{ user.is_liked ? '♥' : '♡' }}</span>
+            </button>
+          </div>
+          <p class="meta">Level {{ user.level }} · Rank #{{ user.rank }}</p>
+          <p class="meta">Points: {{ user.points }}</p>
+        </div>
+      </header>
+
+      <section class="stats-grid">
+        <article>
+          <strong>{{ user.achievements_total }}</strong>
+          <span>Achievements</span>
+        </article>
+        <article>
+          <strong>{{ user.visited_total }}</strong>
+          <span>Visited attractions</span>
+        </article>
+        <article>
+          <strong>{{ user.favorites_count }}</strong>
+          <span>Liked by users</span>
+        </article>
+      </section>
+
+      <section class="achievements">
+        <h2>Achievements</h2>
+        <p *ngIf="user.achievements.length === 0" class="state">No achievements earned yet.</p>
+
+        <ul *ngIf="user.achievements.length > 0">
+          <li *ngFor="let ua of user.achievements">
+            <strong>{{ ua.achievement.name }}</strong>
+            <span>{{ ua.achievement.description }}</span>
+            <small>Earned {{ ua.earned_at | date:'dd MMM yyyy' }}</small>
+          </li>
+        </ul>
+      </section>
+    </ng-container>
+  </div>
+</section>

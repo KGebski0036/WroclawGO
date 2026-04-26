@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -74,6 +75,24 @@ class UserEquippedAvatarItem(models.Model):
         return f"{self.user.username} [{self.slot}] — {self.item.name}"
 
 
+class UserFavorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_relationships')
+    favorite_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorited_by_relationships')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'favorite_user')
+        constraints = [
+            models.CheckConstraint(
+                check=~Q(user=models.F('favorite_user')),
+                name='prevent_self_favorite',
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} -> {self.favorite_user.username}"
+
+
 class Achievement(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -110,36 +129,33 @@ class VisitedAttraction(models.Model):
 
 @receiver(post_save, sender=User)
 def unlock_default_items(sender, instance, created, **kwargs):
-    if not created:
-        return
+    if created:
+        defaults = AvatarItem.objects.filter(is_default=True).order_by('tag', 'id')
+        UserAvatarItem.objects.bulk_create(
+            [UserAvatarItem(user=instance, item=item) for item in defaults],
+            ignore_conflicts=True,
+        )
 
-    defaults = list(AvatarItem.objects.filter(is_default=True).order_by('tag', 'id'))
+        equipped_defaults = {}
+        for item in defaults:
+            if item.tag not in equipped_defaults:
+                equipped_defaults[item.tag] = item
 
-    UserAvatarItem.objects.bulk_create(
-        [UserAvatarItem(user=instance, item=item) for item in defaults],
-        ignore_conflicts=True,
-    )
-
-    defaults_by_tag = {}
-    for item in defaults:
-        if item.tag == 'background' and item.name == 'Sky Background':
-            defaults_by_tag['background'] = item
-            continue
-
-        if item.tag not in defaults_by_tag:
-            defaults_by_tag[item.tag] = item
-
-    UserEquippedAvatarItem.objects.bulk_create(
-        [
-            UserEquippedAvatarItem(user=instance, item=item, slot=item.tag)
-            for item in defaults_by_tag.values()
-        ],
-        ignore_conflicts=True,
-    )
+        UserEquippedAvatarItem.objects.bulk_create(
+            [
+                UserEquippedAvatarItem(user=instance, item=item, slot=item.tag)
+                for item in equipped_defaults.values()
+            ],
+            ignore_conflicts=True,
+        )
 
 
 @receiver(post_save, sender='attractions.VisitedAttraction')
 def on_visited_attraction_saved(sender, instance, created, **kwargs):
-    # Achievement check is handled directly in the visited view
-    # to avoid double evaluation.
-    return
+    if created:
+        user = instance.user
+        User.objects.filter(pk=user.pk).update(
+            points=models.F('points') + instance.attraction.points_reward
+        )
+        from .achievement_service import check_achievements
+        check_achievements(user)

@@ -2,14 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { AvatarItem, UserAvatarItem, UserEquippedAvatarItem } from '../models/avatar.model';
+import { API_URL, STATIC_BASE_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AvatarService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8000/api/avatar';
-  private readonly staticBaseUrl = 'http://localhost:8000/static/';
+  private readonly apiUrl = `${API_URL}/avatar`;
+  private readonly staticBaseUrl = STATIC_BASE_URL;
 
   getAllItems(): Observable<AvatarItem[]> {
     return this.http.get<AvatarItem[]>(`${this.apiUrl}/items/`);

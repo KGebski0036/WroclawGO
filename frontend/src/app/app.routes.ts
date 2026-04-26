@@ -8,12 +8,16 @@ import { AvatarShopComponent } from './pages/avatar-shop/avatar-shop.component';
 import { MapViewComponent } from './pages/map-view/map-view.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { UserRankingComponent } from './pages/user-ranking/user-ranking.component';
 import { VisitedAttractionsComponent } from './pages/visited-attractions/visited-attractions.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'map', pathMatch: 'full' },
   { path: 'map', component: MapViewComponent },
   { path: 'attraction/:id', component: AttractionDetailComponent },
+  { path: 'ranking', component: UserRankingComponent, canActivate: [authGuard] },
+  { path: 'users/:username', component: UserProfileComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {

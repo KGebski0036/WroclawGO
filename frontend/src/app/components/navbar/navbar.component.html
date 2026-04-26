@@ -13,6 +13,15 @@
       Map
     </a>
 
+    <a
+      class="nav-tab"
+      routerLink="/ranking"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Ranking
+    </a>
+
     <ng-container *ngIf="currentUser$ | async as currentUser; else guestAvatar">
       <a
         class="nav-tab nav-identity"

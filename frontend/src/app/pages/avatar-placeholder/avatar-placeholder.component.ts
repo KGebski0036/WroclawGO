@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Subscription, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { UserEquippedAvatarItem } from '../../models/avatar.model';
 import { VisitedAttraction } from '../../models/attraction.model';
 import { UserAchievement } from '../../models/achievement.model';
@@ -16,32 +18,43 @@ import { AchievementService } from '../../services/achievement.service';
   templateUrl: './avatar-placeholder.component.html',
   styleUrl: './avatar-placeholder.component.css'
 })
-export class AvatarPlaceholderComponent implements OnInit {
+export class AvatarPlaceholderComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly attractionService = inject(AttractionService);
   private readonly achievementService = inject(AchievementService);
   readonly avatarService = inject(AvatarService);
-
   readonly currentUser$ = this.authService.currentUser$;
   readonly equippedItems$ = this.avatarService.getEquippedItems();
 
   visitedPreview: VisitedAttraction[] = [];
   achievementsPreview: UserAchievement[] = [];
+  private visitedPollSub?: Subscription;
+  private achievementsPollSub?: Subscription;
+
+  readonly plannedTrips = [
+    { name: 'Old Town route', eta: 'Tomorrow', points: 35 },
+    { name: 'Island bridges walk', eta: 'In 3 days', points: 25 },
+    { name: 'Hidden courtyards', eta: 'Weekend', points: 40 }
+  ];
 
   ngOnInit(): void {
-    this.authService.fetchCurrentUser().subscribe({
-      error: () => {}
-    });
-
-    this.attractionService.getVisitedAttractions().subscribe({
+    this.visitedPollSub = timer(0, 15000).pipe(
+      switchMap(() => this.attractionService.getVisitedAttractions())
+    ).subscribe({
       next: (data) => { this.visitedPreview = data.slice(0, 4); },
       error: () => { this.visitedPreview = []; }
     });
-
-    this.achievementService.getEarnedAchievements().subscribe({
+    this.achievementsPollSub = timer(0, 15000).pipe(
+      switchMap(() => this.achievementService.getEarnedAchievements())
+    ).subscribe({
       next: (data) => { this.achievementsPreview = data.slice(0, 4); },
       error: () => { this.achievementsPreview = []; }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.visitedPollSub?.unsubscribe();
+    this.achievementsPollSub?.unsubscribe();
   }
 
   getInitials(username: string): string {
@@ -78,6 +91,24 @@ export class AvatarPlaceholderComponent implements OnInit {
   }
 
   getOrderedEquippedItems(items: UserEquippedAvatarItem[]): UserEquippedAvatarItem[] {
-    return this.avatarService.getSortedEquippedItems(items);
+    const slotOrder: Record<string, number> = {
+      background: 0,
+      base: 10,
+      pants: 20,
+      shirts: 30,
+      mouth: 40,
+      eyes: 50,
+      hair: 60,
+    };
+
+    return [...items].sort((a, b) => {
+      const left = slotOrder[a.slot] ?? 100;
+      const right = slotOrder[b.slot] ?? 100;
+      return left - right;
+    });
+  }
+
+  getLayerStyle(slot: string): Record<string, string> {
+    return { transform: 'translate(0, 0) scale(1)' };
   }
 }

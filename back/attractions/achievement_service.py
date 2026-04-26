@@ -40,22 +40,22 @@ def check_traveler(user):
 
 
 def check_dwarf_hunter(user):
-    return _visited_count_by_category(user, 'krasnale') >= 20
+    return _visited_count_by_category(user, 'krasnal') >= 20
 
 
 def check_dwarf_master(user):
-    total = _total_in_category('krasnale')
+    total = _total_in_category('krasnal')
     if total == 0:
         return False
-    return _visited_count_by_category(user, 'krasnale') >= total
+    return _visited_count_by_category(user, 'krasnal') >= total
 
 
 def check_museum_enthusiast(user):
-    return _visited_count_by_category(user, 'museums') >= 3
+    return _visited_count_by_category(user, 'muzeum') >= 3
 
 
 def check_nature_walker(user):
-    return _visited_count_by_category(user, 'parks') >= 3
+    return _visited_count_by_category(user, 'park') >= 3
 
 
 def check_monument_hunter(user):
@@ -78,9 +78,7 @@ ACHIEVEMENT_CHECKS = {
 
 def check_achievements(user):
     """
-    Evaluate all achievements the user has not yet earned.
-    Creates UserAchievement records and awards points for newly earned ones.
-    Returns a list of newly earned Achievement objects.
+--
     """
     already_earned_ids = set(
         UserAchievement.objects.filter(user=user).values_list('achievement_id', flat=True)

@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Subscription, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { VisitedAttraction } from '../../models/attraction.model';
 import { AttractionService } from '../../services/attraction.service';
 
@@ -11,23 +13,31 @@ import { AttractionService } from '../../services/attraction.service';
   templateUrl: './visited-attractions.component.html',
   styleUrl: './visited-attractions.component.css'
 })
-export class VisitedAttractionsComponent implements OnInit {
+export class VisitedAttractionsComponent implements OnInit, OnDestroy {
   visitedAttractions: VisitedAttraction[] = [];
   loading = true;
   error: string | null = null;
+  private pollSub?: Subscription;
 
   constructor(private attractionService: AttractionService) {}
 
   ngOnInit(): void {
-    this.attractionService.getVisitedAttractions().subscribe({
+    this.pollSub = timer(0, 15000).pipe(
+      switchMap(() => this.attractionService.getVisitedAttractions())
+    ).subscribe({
       next: (data) => {
         this.visitedAttractions = data;
         this.loading = false;
+        this.error = null;
       },
       error: () => {
         this.error = 'Failed to load visited attractions.';
         this.loading = false;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.pollSub?.unsubscribe();
   }
 }

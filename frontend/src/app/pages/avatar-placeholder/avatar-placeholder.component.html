@@ -2,7 +2,9 @@
   <div class="avatar-dashboard" *ngIf="currentUser$ | async as currentUser">
     <div class="page-layout">
 
+      <!-- LEFT COLUMN -->
       <div class="left-col">
+
         <article class="dark-card avatar-view-card">
           <p class="label">Avatar view</p>
           <h2>Current look</h2>
@@ -15,6 +17,7 @@
                 class="avatar-layer"
                 [src]="avatarService.toStaticUrl(equipped.item.svg_path)"
                 [alt]="equipped.item.name"
+                [ngStyle]="getLayerStyle(equipped.slot)"
               />
             </ng-container>
             <ng-template #emptyAvatar>
@@ -22,7 +25,8 @@
             </ng-template>
           </div>
 
-          <a class="change-avatar-btn" routerLink="/your-avatar/constructor">Open constructor</a>
+          <a class="change-avatar-btn" routerLink="/your-avatar/wardrobe">Change avatar</a>
+          <a class="shop-btn" routerLink="/your-avatar/shop">Go to Shop</a>
         </article>
 
         <article class="dark-card level-card">
@@ -35,6 +39,7 @@
         </article>
       </div>
 
+      <!-- RIGHT COLUMN -->
       <div class="right-col">
         <article class="dark-card profile-card">
           <div class="profile-head">
@@ -49,23 +54,6 @@
             <span>{{ getStatusLabel(currentUser.points) }}</span>
           </div>
         </article>
-
-        <article class="panel">
-          <div class="panel-head">
-            <h3>Modules</h3>
-          </div>
-          <ul>
-            <li>
-              <strong><a routerLink="/your-avatar/shop">Open shop</a></strong>
-              <span>Buy new avatar items with points.</span>
-            </li>
-            <li>
-              <strong><a routerLink="/your-avatar/constructor">Open constructor</a></strong>
-              <span>Equip and remove items you already own.</span>
-            </li>
-          </ul>
-        </article>
-
         <article class="panel">
           <div class="panel-head">
             <h3>Achievements preview</h3>

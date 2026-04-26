@@ -1,0 +1,177 @@
+:host {
+  display: block;
+}
+
+.profile-page {
+  min-height: calc(100vh - 72px);
+  background: linear-gradient(140deg, #f6fbff 0%, #f1f9f4 50%, #eef1f8 100%);
+  padding: 2rem 1rem;
+}
+
+.profile-card {
+  max-width: 860px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #dce5ee;
+  border-radius: 18px;
+  box-shadow: 0 14px 36px rgba(26, 45, 67, 0.1);
+  padding: 1.3rem;
+}
+
+.back-link {
+  color: #1d5f89;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.profile-header {
+  margin-top: 0.9rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.avatar-preview {
+  width: 104px;
+  height: 104px;
+  border-radius: 16px;
+  border: 1px solid #cfe0ec;
+  background: #f6f9fb;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+h1 {
+  margin: 0;
+  color: #14324f;
+}
+
+.name-row {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.heart-btn {
+  border: 1px solid #d6dfea;
+  background: #fff;
+  color: #7b8b9c;
+  border-radius: 999px;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.heart-btn.is-liked {
+  color: #cf2e55;
+  border-color: #f3b6c7;
+  background: #fff4f7;
+}
+
+.heart-btn.is-self {
+  color: #a0afbd;
+  border-color: #e0e8ef;
+}
+
+.heart-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.meta {
+  margin: 0.25rem 0;
+  color: #4c6075;
+}
+
+.stats-grid {
+  margin-top: 1.1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.stats-grid article {
+  border: 1px solid #dbe6ee;
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.stats-grid strong {
+  font-size: 1.15rem;
+  color: #143955;
+}
+
+.stats-grid span {
+  color: #4a6277;
+}
+
+.achievements {
+  margin-top: 1.25rem;
+}
+
+.achievements h2 {
+  margin: 0 0 0.6rem;
+  color: #153550;
+}
+
+.achievements ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.achievements li {
+  border: 1px solid #e0e8ef;
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.achievements strong {
+  color: #193f5d;
+}
+
+.achievements span,
+.achievements small {
+  color: #556a7d;
+}
+
+.state {
+  padding: 1rem 0;
+  color: #3d556d;
+}
+
+.state.error {
+  color: #8e2e2e;
+}
+
+@media (max-width: 760px) {
+  .profile-header {
+    align-items: flex-start;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -30,6 +30,74 @@ class UserSerializer(serializers.ModelSerializer):
         return UserEquippedAvatarItemSerializer(equipped, many=True).data
 
 
+class UserRankingSerializer(serializers.ModelSerializer):
+    level = serializers.SerializerMethodField()
+    equipped_items = serializers.SerializerMethodField()
+    rank = serializers.IntegerField(read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
+    favorites_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'points', 'level', 'rank', 'is_liked', 'favorites_count', 'equipped_items']
+
+    def get_level(self, obj):
+        return (obj.points // 100) + 1
+
+    def get_equipped_items(self, obj):
+        equipped = getattr(obj, 'equipped_avatar_items', None)
+        if equipped is not None and hasattr(equipped, 'all'):
+            items = equipped.all()
+            return UserEquippedAvatarItemSerializer(items, many=True).data
+        equipped_fallback = UserEquippedAvatarItem.objects.filter(user=obj).select_related('item').order_by('slot')
+        return UserEquippedAvatarItemSerializer(equipped_fallback, many=True).data
+
+
+class UserPublicProfileSerializer(serializers.ModelSerializer):
+    level = serializers.SerializerMethodField()
+    equipped_items = serializers.SerializerMethodField()
+    achievements = serializers.SerializerMethodField()
+    rank = serializers.IntegerField(read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
+    favorites_count = serializers.IntegerField(read_only=True)
+    achievements_total = serializers.IntegerField(read_only=True)
+    visited_total = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'points',
+            'level',
+            'rank',
+            'is_liked',
+            'favorites_count',
+            'achievements_total',
+            'visited_total',
+            'equipped_items',
+            'achievements',
+        ]
+
+    def get_level(self, obj):
+        return (obj.points // 100) + 1
+
+    def get_equipped_items(self, obj):
+        equipped = getattr(obj, 'equipped_avatar_items', None)
+        if equipped is not None and hasattr(equipped, 'all'):
+            items = equipped.all()
+            return UserEquippedAvatarItemSerializer(items, many=True).data
+        equipped_fallback = UserEquippedAvatarItem.objects.filter(user=obj).select_related('item').order_by('slot')
+        return UserEquippedAvatarItemSerializer(equipped_fallback, many=True).data
+
+    def get_achievements(self, obj):
+        earned = getattr(obj, 'achievements', None)
+        if earned is not None and hasattr(earned, 'all'):
+            return UserAchievementSerializer(earned.all().order_by('-earned_at'), many=True).data
+        earned_fallback = UserAchievement.objects.filter(user=obj).select_related('achievement').order_by('-earned_at')
+        return UserAchievementSerializer(earned_fallback, many=True).data
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password_confirm = serializers.CharField(write_only=True)

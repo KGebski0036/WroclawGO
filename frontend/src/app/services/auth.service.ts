@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '../models/auth.model';
+import { API_URL } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '../models
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly apiUrl = 'http://localhost:8000/api/auth';
+  private readonly apiUrl = `${API_URL}/auth`;
   private readonly accessTokenKey = 'wroclawgo.access';
   private readonly refreshTokenKey = 'wroclawgo.refresh';
   private readonly userSubject = new BehaviorSubject<AuthUser | null>(null);

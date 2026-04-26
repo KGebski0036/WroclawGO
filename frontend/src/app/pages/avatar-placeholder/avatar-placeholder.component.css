@@ -102,6 +102,27 @@
   filter: brightness(1.08);
 }
 
+.shop-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.2rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  text-decoration: none;
+  background: linear-gradient(90deg, #f59e0b, #e86c2c);
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.shop-btn:hover {
+  filter: brightness(1.08);
+}
+
 .profile-head {
   display: flex;
   align-items: center;

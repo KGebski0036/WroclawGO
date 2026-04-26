@@ -1,0 +1,88 @@
+<section class="ranking-page">
+  <div class="ranking-card">
+    <header class="ranking-header">
+      <div>
+        <p class="eyebrow">Community</p>
+        <h1>User Ranking</h1>
+        <p>Leaderboard sorted by level and points. Search by username to find a player quickly.</p>
+      </div>
+      <label class="search-box" for="ranking-search">
+        <span>Search</span>
+        <input
+          id="ranking-search"
+          type="search"
+          [formControl]="searchControl"
+          placeholder="Type a username"
+        />
+      </label>
+
+      <label class="mode-box" for="ranking-mode">
+        <span>View</span>
+        <select id="ranking-mode" [formControl]="modeControl">
+          <option value="all">All Users</option>
+          <option value="liked">Liked Users</option>
+        </select>
+      </label>
+    </header>
+
+    <div *ngIf="loading" class="state">Loading leaderboard...</div>
+    <div *ngIf="error" class="state error">{{ error }}</div>
+
+    <div *ngIf="!loading && !error" class="ranking-list">
+      <header class="row heading">
+        <span>#</span>
+        <span>Player</span>
+        <span>Like</span>
+        <span>Level</span>
+      </header>
+
+      <article class="row" *ngFor="let user of users">
+        <span class="rank">{{ user.rank }}</span>
+
+        <div class="player">
+          <div class="avatar-preview" *ngIf="user.equipped_items.length > 0">
+            <img
+              *ngFor="let equipped of getOrderedEquippedItems(user.equipped_items)"
+              class="avatar-layer"
+              [src]="avatarService.toStaticUrl(equipped.item.svg_path)"
+              [alt]="equipped.item.name"
+            />
+          </div>
+
+          <a class="username" [routerLink]="['/users', user.username]">{{ user.username }}</a>
+          <small>{{ user.points }} pts</small>
+          <small class="favorites">Liked by {{ user.favorites_count }}</small>
+        </div>
+
+        <ng-container *ngIf="!isSelf(user); else selfLikePlaceholder">
+          <button
+            type="button"
+            class="heart-btn"
+            [class.is-liked]="user.is_liked"
+            [disabled]="isLikePending(user)"
+            (click)="toggleFavorite(user, $event)"
+            [attr.aria-label]="user.is_liked ? 'Remove from liked users' : 'Add to liked users'"
+            [title]="user.is_liked ? 'Unlike user' : 'Like user'"
+          >
+            <span aria-hidden="true">{{ user.is_liked ? '♥' : '♡' }}</span>
+          </button>
+        </ng-container>
+        <ng-template #selfLikePlaceholder>
+          <span class="heart-placeholder" aria-hidden="true"></span>
+        </ng-template>
+
+        <span class="level">Lv {{ user.level }}</span>
+      </article>
+
+      <p *ngIf="users.length === 0" class="state">
+        {{ isLikedMode ? 'No liked users matched your search.' : 'No users matched your search.' }}
+      </p>
+    </div>
+
+    <footer class="pager" *ngIf="!loading && !error">
+      <button type="button" (click)="goToPrev()" [disabled]="!canGoPrev">Previous</button>
+      <span>Page {{ currentPage }} / {{ totalPages }}</span>
+      <button type="button" (click)="goToNext()" [disabled]="!canGoNext">Next</button>
+    </footer>
+  </div>
+</section>
