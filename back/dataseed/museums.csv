@@ -1,18 +1,18 @@
-nazwa,lat,lng
-Muzeum Narodowe we Wrocławiu,51.1107,17.0475
-Panorama Racławicka,51.1103,17.0446
-Muzeum Architektury we Wrocławiu,51.1089,17.0442
-Muzeum Poczty i Telekomunikacji,51.1009,17.0403
-Muzeum Miejskie Wrocławia (Stary Ratusz),51.1090,17.0319
-Pałac Królewski (Muzeum Historyczne),51.1072,17.0285
-Muzeum Współczesne Wrocław,51.1146,17.0005
-Muzeum Etnograficzne,51.0967,17.0482
-Muzeum Archidiecezjalne,51.1135,17.0460
-Muzeum Uniwersytetu Wrocławskiego,51.1141,17.0342
-Muzeum Przyrodnicze Uniwersytetu Wrocławskiego,51.1148,17.0535
-Muzeum Mineralogiczne UWr,51.1185,17.0332
-Muzeum Geologiczne UWr,51.1185,17.0332
-Muzeum Farmacji,51.1102,17.0324
-Muzeum Pana Tadeusza,51.1093,17.0327
-Centrum Historii Zajezdnia,51.1100,16.9936
-Muzeum Motoryzacji Topacz,51.0203,17.0400
+nazwa,lat,lng,opis
+Muzeum Narodowe we Wrocławiu,51.1107,17.0475,"Jedno z najważniejszych muzeów w Polsce, prezentujące sztukę od średniowiecza po współczesność."
+Panorama Racławicka,51.1103,17.0446,"Monumentalne malowidło przedstawiające bitwę pod Racławicami, jedno z największych dzieł tego typu w Europie."
+Muzeum Architektury we Wrocławiu,51.1089,17.0442,"Unikalne muzeum poświęcone architekturze, mieszczące się w dawnym klasztorze bernardynów."
+Muzeum Poczty i Telekomunikacji,51.1009,17.0403,"Placówka prezentująca historię komunikacji, od dawnych listów po nowoczesne technologie."
+Muzeum Miejskie Wrocławia (Stary Ratusz),51.1090,17.0319,"Historyczne wnętrza ratusza ukazujące dzieje Wrocławia i jego mieszkańców."
+Pałac Królewski (Muzeum Historyczne),51.1072,17.0285,"Barokowy pałac będący dawną rezydencją królów pruskich, dziś muzeum historii miasta."
+Muzeum Współczesne Wrocław,51.1146,17.0005,"Nowoczesna przestrzeń sztuki współczesnej, mieszcząca się w dawnym schronie przeciwlotniczym."
+Muzeum Etnograficzne,51.0967,17.0482,"Oddział Muzeum Narodowego prezentujący kulturę ludową i tradycje różnych regionów."
+Muzeum Archidiecezjalne,51.1135,17.0460,"Zbiory sztuki sakralnej, w tym cenne zabytki związane z historią Kościoła na Śląsku."
+Muzeum Uniwersytetu Wrocławskiego,51.1141,17.0342,"Muzeum mieszczące się w gmachu głównym uczelni, prezentujące jej historię i Aula Leopoldina."
+Muzeum Przyrodnicze Uniwersytetu Wrocławskiego,51.1148,17.0535,"Bogate kolekcje zoologiczne i paleontologiczne, atrakcyjne dla miłośników przyrody."
+Muzeum Mineralogiczne UWr,51.1185,17.0332,"Zbiory minerałów i kamieni szlachetnych z całego świata."
+Muzeum Geologiczne UWr,51.1185,17.0332,"Ekspozycje związane z budową Ziemi, skałami i skamieniałościami."
+Muzeum Farmacji,51.1102,17.0324,"Niewielkie muzeum prezentujące historię aptekarstwa i dawne wyposażenie aptek."
+Muzeum Pana Tadeusza,51.1093,17.0327,"Nowoczesne muzeum literackie poświęcone epopei Adama Mickiewicza i historii polskiej kultury."
+Centrum Historii Zajezdnia,51.1100,16.9936,"Interaktywne muzeum opowiadające o historii Wrocławia w XX wieku i ruchu Solidarność."
+Muzeum Motoryzacji Topacz,51.0203,17.0400,"Kolekcja zabytkowych samochodów i pojazdów, położona w podwrocławskim zamku Topacz."

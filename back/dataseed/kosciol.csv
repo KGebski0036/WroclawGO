@@ -1,11 +1,11 @@
-nazwa,lat,lng
-Katedra św. Jana Chrzciciela,51.1147,17.0466
-Kościół św. Elżbiety,51.1105,17.0307
-Kościół św. Marii Magdaleny,51.1098,17.0345
-Kościół św. Krzyża,51.1153,17.0475
-Kościół Garnizonowy św. Elżbiety,51.1104,17.0305
-Kościół św. Wojciecha,51.1134,17.0382
-Kościół św. Antoniego,51.1100,17.0280
-Kościół św. Michała Archanioła,51.0995,17.0452
-Kościół Najświętszego Serca Jezusowego,51.0922,17.0304
-Kościół św. Bonifacego,51.1180,17.0530
+nazwa,lat,lng,opis
+Katedra św. Jana Chrzciciela,51.1147,17.0466,"Gotycka katedra na Ostrowie Tumskim, jedna z najważniejszych świątyń Wrocławia, znana z dwóch wysokich wież i punktu widokowego."
+Kościół św. Elżbiety,51.1105,17.0307,"Monumentalny kościół przy Rynku, z jedną z najwyższych wież w mieście, oferującą panoramiczny widok."
+Kościół św. Marii Magdaleny,51.1098,17.0345,"Gotycka świątynia znana z Mostku Pokutnic, łączącego dwie wieże, oraz miejskich legend."
+Kościół św. Krzyża,51.1153,17.0475,"Unikalny dwupoziomowy kościół gotycki na Ostrowie Tumskim, z dwiema przestrzeniami sakralnymi."
+Kościół Garnizonowy św. Elżbiety,51.1104,17.0305,"Świątynia wojskowa w centrum miasta, pełniąca funkcję kościoła garnizonowego."
+Kościół św. Wojciecha,51.1134,17.0382,"Jeden z najstarszych kościołów Wrocławia, związany z dominikanami i historią miasta."
+Kościół św. Antoniego,51.1100,17.0280,"Barokowy kościół franciszkanów, znany z pięknego wnętrza i spokojnej atmosfery."
+Kościół św. Michała Archanioła,51.0995,17.0452,"Neogotycka świątynia z wysoką wieżą, charakterystyczna dla tej części miasta."
+Kościół Najświętszego Serca Jezusowego,51.0922,17.0304,"Nowoczesna świątynia parafialna z XX wieku, o prostej i funkcjonalnej architekturze."
+Kościół św. Bonifacego,51.1180,17.0530,"Niewielki kościół parafialny, ważny dla lokalnej społeczności na obrzeżach miasta."

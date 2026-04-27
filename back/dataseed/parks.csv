@@ -1,11 +1,11 @@
-nazwa,lat,lng
-Park Szczytnicki,51.1095,17.0805
-Ogród Japoński,51.1073,17.0797
-Ogród Botaniczny,51.1146,17.0484
-Park Tołpy,51.1222,17.0467
-Park Grabiszyński,51.0947,16.9925
-Park Południowy,51.0887,17.0173
-Park Staszica,51.1207,17.0335
-Park Brochowski,51.0675,17.0627
-Park Zachodni,51.1275,16.9901
-Wyspa Słodowa (teren zielony),51.1128,17.0340
+nazwa,lat,lng,opis
+Park Szczytnicki,51.1095,17.0805,"Jeden z największych i najstarszych parków we Wrocławiu, pełen alei spacerowych i zabytkowej zieleni."
+Ogród Japoński,51.1073,17.0797,"Tematyczny ogród w stylu japońskim z mostkami, stawami i starannie zaprojektowaną roślinnością."
+Ogród Botaniczny,51.1146,17.0484,"Bogaty ogród naukowy Uniwersytetu Wrocławskiego z tysiącami gatunków roślin."
+Park Tołpy,51.1222,17.0467,"Kameralny park w centrum miasta z jeziorkiem i spokojnymi alejkami."
+Park Grabiszyński,51.0947,16.9925,"Duży park na zachodzie Wrocławia, idealny do spacerów i aktywnego wypoczynku."
+Park Południowy,51.0887,17.0173,"Elegancki park z XIX wieku, znany z dużego stawu i malowniczych alei."
+Park Staszica,51.1207,17.0335,"Niewielki, spokojny park w okolicy placu Grunwaldzkiego."
+Park Brochowski,51.0675,17.0627,"Park na obrzeżach miasta, popularny wśród mieszkańców Brochowa."
+Park Zachodni,51.1275,16.9901,"Rozległy park rekreacyjny z terenami spacerowymi i sportowymi."
+Wyspa Słodowa (teren zielony),51.1128,17.0340,"Popularna wyspa nad Odrą, miejsce spotkań, wydarzeń i relaksu w centrum miasta."

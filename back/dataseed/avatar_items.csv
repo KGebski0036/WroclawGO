@@ -1,0 +1,39 @@
+tag,name,svg_path,cost,is_default
+background,Pink Background,avatars/background/background_pink.png,0,True
+background,Sky Background,avatars/background/background_sky.png,0,True
+background,Sky Clouds Background,avatars/background/background_sky_clouds.png,35,False
+background,Strawberry Background,avatars/background/background_strawberry_pattern.png,45,False
+base,Golden Aura,avatars/base/golden-aura.png,0,True
+base,Sunset Rouge,avatars/base/sunset-rouge.png,40,False
+base,Emerald Haze,avatars/base/emerald-haze.png,55,False
+base,Ocean Glow,avatars/base/ocean-glow.png,65,False
+base,Blush Pink,avatars/base/blush-pink.png,75,False
+base,Midnight Indigo,avatars/base/midnight-indigo.png,90,False
+eyes,Open Eyes,avatars/eyes/open.png,15,False
+eyes,Wink Eyes,avatars/eyes/wink.png,20,False
+mouth,Basic Mouth,avatars/mouth/mouth_basic.png,12,False
+mouth,Closed Mouth,avatars/mouth/mouth_closed.png,14,False
+mouth,Smile Mouth,avatars/mouth/mouth_smile.png,18,False
+pants,Brown Shorts,avatars/pants/shorts_brown.png,18,False
+pants,Camo Shorts,avatars/pants/shorts_camo.png,22,False
+pants,Dark Blue Shorts,avatars/pants/shorts_dark_blue.png,20,False
+pants,Blue Skirt,avatars/pants/skirt_blue.png,20,False
+pants,Gray Skirt,avatars/pants/skirt_gray.png,20,False
+pants,Pink Skirt,avatars/pants/skirt_pink.png,20,False
+pants,Purple Skirt,avatars/pants/skirt_purple.png,24,False
+shirts,Sleeveless Bow,avatars/shirts/sleeveless_bow.png,24,False
+shirts,Sleeveless Clouds,avatars/shirts/sleeveless_clouds.png,24,False
+shirts,Sleeveless Frog,avatars/shirts/sleeveless_frog.png,24,False
+shirts,Sleeveless Icecream,avatars/shirts/sleeveless_icecream.png,24,False
+shirts,Tshirt Bow,avatars/shirts/tshirt_bow.png,26,False
+shirts,Tshirt Clouds,avatars/shirts/tshirt_clouds.png,26,False
+shirts,Tshirt Frog,avatars/shirts/tshirt_frog.png,26,False
+shirts,Tshirt Icecream,avatars/shirts/tshirt_icecream.png,26,False
+hair,Short Hair Blonde,avatars/hair/short_hair_blonde.png,20,False
+hair,Short Hair Blue,avatars/hair/short_hair_blue.png,20,False
+hair,Short Hair Brown,avatars/hair/short_hair_brown.png,20,False
+hair,Two Puffs Blonde,avatars/hair/two_puffs_blonde.png,24,False
+hair,Two Puffs Brown,avatars/hair/two_puffs_brown.png,24,False
+hair,Two Puffs Dark Blue,avatars/hair/two_puffs_dark_blue.png,24,False
+hair,Two Puffs Purple,avatars/hair/two_puffs_purple.png,24,False
+hair,Two Puffs Red,avatars/hair/two_puffs_red.png,24,False

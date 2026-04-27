@@ -1,11 +1,11 @@
-nazwa,lat,lng
-Hala Stulecia,51.1069,17.0775
-Rynek we Wrocławiu,51.1090,17.0326
-Stary Ratusz,51.1097,17.0323
-Ostrów Tumski,51.1145,17.0465
-Most Grunwaldzki,51.1106,17.0497
-Most Tumski,51.1139,17.0452
-Plac Solny,51.1093,17.0306
-Kamieniczki Jaś i Małgosia,51.1102,17.0320
-Dworzec Główny PKP,51.0982,17.0366
-Pergola,51.1078,17.0785
+nazwa,lat,lng,opis
+Hala Stulecia,51.1069,17.0775,"Ikoniczny obiekt modernistyczny UNESCO, zaprojektowany przez Maxa Berga, ważne miejsce wydarzeń i koncertów."
+Rynek we Wrocławiu,51.1090,17.0326,"Główny plac miasta z kolorowymi kamienicami, restauracjami i tętniącym życiem przez cały rok."
+Stary Ratusz,51.1097,17.0323,"Gotycki ratusz z bogato zdobioną fasadą, jedna z najlepiej zachowanych tego typu budowli w Europie."
+Ostrów Tumski,51.1145,17.0465,"Najstarsza część Wrocławia, pełna zabytkowych kościołów i romantycznych uliczek z gazowymi latarniami."
+Most Grunwaldzki,51.1106,17.0497,"Charakterystyczny most wiszący nad Odrą, jeden z symboli inżynierii miasta."
+Most Tumski,51.1139,17.0452,"Zabytkowy most pieszy łączący Ostrów Tumski z resztą miasta, znany z kłódek zakochanych."
+Plac Solny,51.1093,17.0306,"Historyczny plac tuż przy Rynku, dawniej miejsce handlu solą, dziś kwiatów i kawiarni."
+Kamieniczki Jaś i Małgosia,51.1102,17.0320,"Dwie charakterystyczne kamieniczki połączone bramą, tworzące jedną z ikon Wrocławia."
+Dworzec Główny PKP,51.0982,17.0366,"Neogotycki dworzec kolejowy z XIX wieku, ważny węzeł komunikacyjny miasta."
+Pergola,51.1078,17.0785,"Półkolista kolumnada przy Hali Stulecia, miejsce spacerów i pokazów multimedialnych fontanny."

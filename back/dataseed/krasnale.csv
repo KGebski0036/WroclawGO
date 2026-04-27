@@ -1,41 +1,41 @@
-nazwa,lat,lng
-100matolog,51.095006,17.058714
-Abruzjusz,51.106111,17.031500
-Adwokatka,51.118389,17.041889
-Agorek,51.134747,17.021536
-Akademiusz,51.110200,17.032800
-Albercik,51.109900,17.031200
-Alkoholik,51.108700,17.033100
-Ada,51.109500,17.032200
-Fakapek,51.109600,17.032300
-Adam Grand,51.108900,17.033000
-Adrianek Przedsiębiorca,51.108400,17.032100
-Adwokatek,51.118300,17.041800
-Agencjusz,51.110700,17.030500
-Ajdik,51.111000,17.034000
-Akceptacja,51.108600,17.032900
-Align I,51.109100,17.032400
-Align II,51.109200,17.032500
-Alonka,51.110200,17.031900
-Dziecko I,51.110300,17.032000
-Dziecko II,51.110400,17.032100
-Głazek,51.109800,17.032700
-Rutek,51.109700,17.032600
-Zarembek,51.109600,17.032500
-Bankomat,51.108900,17.032000
-Piekarz,51.110000,17.031500
-Turysta,51.109200,17.032500
-Student,51.114000,17.034000
-Więzień,51.109500,17.030200
-Syzyfki,51.109800,17.033500
-Rzeźnik,51.110300,17.030900
-Papa Krasnal,51.109100,17.032700
-Strażak,51.108500,17.031000
-Listonosz,51.109300,17.032800
-Kowal,51.109600,17.032900
-Dentysta,51.095100,17.058700
-Lekarz,51.095200,17.058600
-Bibliotekarz,51.113800,17.034200
-Programista,51.107800,17.027600
-Kucharz,51.109900,17.031800
-Muzyk,51.107700,17.027500
+nazwa,lat,lng,opis
+100matolog,51.095006,17.058714,"Krasnal związany ze stomatologią, symbolizujący troskę o zdrowy uśmiech."
+Abruzjusz,51.106111,17.031500,"Tajemniczy krasnal o nietypowej nazwie, budzący ciekawość przechodniów."
+Adwokatka,51.118389,17.041889,"Krasnal reprezentujący zawód prawnika, stojący na straży sprawiedliwości."
+Agorek,51.134747,17.021536,"Pogodny krasnal z północy miasta, dodający uroku okolicy."
+Akademiusz,51.110200,17.032800,"Krasnal uczony, symbol wiedzy i akademickiego ducha Wrocławia."
+Albercik,51.109900,17.031200,"Przyjazny krasnal, który wita przechodniów w centrum miasta."
+Alkoholik,51.108700,17.033100,"Krasnal o humorystycznym charakterze, nawiązujący do życia nocnego."
+Ada,51.109500,17.032200,"Niewielki krasnal o sympatycznym imieniu, łatwy do przeoczenia."
+Fakapek,51.109600,17.032300,"Zabawny krasnal o nietypowej nazwie, przyciągający uwagę turystów."
+Adam Grand,51.108900,17.033000,"Krasnal o wielkim charakterze, wyróżniający się nazwą i stylem."
+Adrianek Przedsiębiorca,51.108400,17.032100,"Krasnal biznesmen, symbol przedsiębiorczości i zaradności."
+Adwokatek,51.118300,17.041800,"Mniejszy przedstawiciel świata prawa, towarzysz Adwokatki."
+Agencjusz,51.110700,17.030500,"Krasnal związany z branżą usługową i miejską aktywnością."
+Ajdik,51.111000,17.034000,"Krasnal o zagadkowej nazwie, często budzący uśmiech."
+Akceptacja,51.108600,17.032900,"Krasnal promujący tolerancję i otwartość."
+Align I,51.109100,17.032400,"Jeden z pary krasnali, tworzących wspólną kompozycję."
+Align II,51.109200,17.032500,"Drugi krasnal z duetu, uzupełniający swojego towarzysza."
+Alonka,51.110200,17.031900,"Sympatyczna krasnalka dodająca uroku okolicy."
+Dziecko I,51.110300,17.032000,"Krasnal przedstawiający najmłodszych mieszkańców miasta."
+Dziecko II,51.110400,17.032100,"Drugi krasnal dziecięcy, tworzący parę z pierwszym."
+Głazek,51.109800,17.032700,"Niewielki krasnal, który lubi ukrywać się przy ziemi."
+Rutek,51.109700,17.032600,"Krasnal o przyjaznym imieniu, często fotografowany przez turystów."
+Zarembek,51.109600,17.032500,"Krasnal o unikalnej nazwie, wyróżniający się wśród innych."
+Bankomat,51.108900,17.032000,"Krasnal pilnujący finansów, zwykle w pobliżu banków."
+Piekarz,51.110000,17.031500,"Krasnal wypiekający chleb, symbol tradycyjnego rzemiosła."
+Turysta,51.109200,17.032500,"Krasnal podróżnik, reprezentujący odwiedzających Wrocław."
+Student,51.114000,17.034000,"Krasnal żak, związany z akademickim życiem miasta."
+Więzień,51.109500,17.030200,"Krasnal nawiązujący do historii i dawnych losów miasta."
+Syzyfki,51.109800,17.033500,"Grupa krasnali inspirowana mitem Syzyfa, symbol pracy i wytrwałości."
+Rzeźnik,51.110300,17.030900,"Krasnal reprezentujący tradycyjny zawód rzemieślniczy."
+Papa Krasnal,51.109100,17.032700,"Jeden z najbardziej znanych krasnali, uznawany za ich przywódcę."
+Strażak,51.108500,17.031000,"Krasnal dbający o bezpieczeństwo i gaszący pożary."
+Listonosz,51.109300,17.032800,"Krasnal doręczający listy i wiadomości."
+Kowal,51.109600,17.032900,"Krasnal rzemieślnik pracujący przy kowadle."
+Dentysta,51.095100,17.058700,"Krasnal dbający o zdrowe zęby mieszkańców."
+Lekarz,51.095200,17.058600,"Krasnal medyk niosący pomoc potrzebującym."
+Bibliotekarz,51.113800,17.034200,"Krasnal miłośnik książek i ciszy bibliotecznej."
+Programista,51.107800,17.027600,"Krasnal nowoczesny, związany z technologią i IT."
+Kucharz,51.109900,17.031800,"Krasnal przygotowujący smaczne potrawy."
+Muzyk,51.107700,17.027500,"Krasnal artysta, wprowadzający muzyczny klimat."

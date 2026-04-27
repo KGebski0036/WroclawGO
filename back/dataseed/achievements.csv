@@ -1,0 +1,11 @@
+name,description,badge_path,points_reward
+First Steps,Visit your first attraction.,achievements/first_steps.svg,10
+Tourist,Visit 4 attractions.,achievements/tourist.svg,20
+Explorer,Visit 10 attractions.,achievements/explorer.svg,40
+Adventurer,Visit 25 attractions.,achievements/adventurer.svg,80
+Traveler,Visit 50 attractions.,achievements/traveler.svg,150
+Dwarf Hunter,Visit 20 dwarfs around Wroclaw.,achievements/dwarf_hunter.svg,60
+Dwarf Master,Visit all dwarfs in Wroclaw.,achievements/dwarf_master.svg,120
+Museum Enthusiast,Visit 3 museums.,achievements/museum_enthusiast.svg,30
+Nature Walker,Visit 3 parks.,achievements/nature_walker.svg,30
+Monument Hunter,Visit 5 monuments.,achievements/monument_hunter.svg,50
