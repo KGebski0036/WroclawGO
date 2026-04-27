@@ -26,11 +26,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
   constructor(private attractionService: AttractionService) {}
 
   private getPopupDetailsLink(featureId: number | undefined): string {
-    if (featureId == null) {
-      return '<span style="display: inline-block; margin-top: 10px; color: #6b7280; font-size: 0.85rem;">Details placeholder coming soon</span>';
-    }
-
-    return `<a href="/attraction/${featureId}" style="display: inline-block; margin-top: 10px; color: #0f5d8c; font-weight: 700; text-decoration: none;">View details</a>`;
+    return '';
+    //return `<a href="/attraction/${featureId}" style="display: inline-block; margin-top: 10px; color: #0f5d8c; font-weight: 700; text-decoration: none;">View details</a>`;
   }
 
   ngAfterViewInit(): void {
@@ -73,7 +70,6 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
             <div style="color: #111827;">
               <h3 style="margin: 0; font-size: 1rem;">${name}</h3>
               <p style="margin: 6px 0 0;">${description}</p>
-              ${this.getPopupDetailsLink(attractionId)}
             </div>
           `);
 
