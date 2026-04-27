@@ -185,6 +185,22 @@ class EquipAvatarItemView(APIView):
         return Response(UserEquippedAvatarItemSerializer(equipped).data, status=status.HTTP_200_OK)
 
 
+class UnequipAvatarItemView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, slot):
+        normalized_slot = (slot or '').strip().lower()
+
+        if normalized_slot in {'base', 'background'}:
+            return Response(
+                {'detail': 'This slot cannot be unequipped.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        UserEquippedAvatarItem.objects.filter(user=request.user, slot=normalized_slot).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class VisitedAttractionListView(generics.ListAPIView):
     serializer_class = VisitedAttractionSerializer
     permission_classes = [permissions.IsAuthenticated]

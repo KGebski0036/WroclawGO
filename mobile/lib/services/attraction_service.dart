@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../core/config/app_config.dart';
+import '../core/network/api_exception.dart';
 import '../models/attraction_models.dart';
 
 class AttractionService {
@@ -132,14 +133,4 @@ class AttractionService {
 
     return fallback;
   }
-}
-
-class ApiException implements Exception {
-  ApiException({required this.statusCode, required this.message});
-
-  final int statusCode;
-  final String message;
-
-  @override
-  String toString() => message;
 }

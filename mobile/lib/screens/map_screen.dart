@@ -1,12 +1,20 @@
 import 'dart:async';
+import 'dart:math' show Point;
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
+import '../core/network/api_exception.dart';
 import '../models/attraction_models.dart';
+import 'achievements_screen.dart';
+import 'avatar_constructor_screen.dart';
+import 'avatar_shop_screen.dart';
+import 'ranking_screen.dart';
 import '../services/attraction_service.dart';
 import '../state/app_session.dart';
+
+enum _AppDestination { ranking, shop, avatar, achievements }
 
 class MapScreen extends StatefulWidget {
   const MapScreen({
@@ -38,6 +46,21 @@ class _MapScreenState extends State<MapScreen> {
   bool _loading = true;
   String? _error;
   bool _locationPermissionDenied = false;
+
+  void _openDestination(_AppDestination destination) {
+    final screen = switch (destination) {
+      _AppDestination.ranking => RankingScreen(session: widget.session),
+      _AppDestination.shop => AvatarShopScreen(session: widget.session),
+      _AppDestination.avatar => AvatarConstructorScreen(
+        session: widget.session,
+      ),
+      _AppDestination.achievements => AchievementsScreen(
+        session: widget.session,
+      ),
+    };
+
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+  }
 
   @override
   void initState() {
@@ -212,6 +235,90 @@ class _MapScreenState extends State<MapScreen> {
         ),
       );
     }
+  }
+
+  void _onMapClick(Point<double> _, LatLng coordinates) {
+    const tapRadiusMeters = 120.0;
+
+    Attraction? nearest;
+    var minDistance = double.infinity;
+
+    for (final attraction in _attractions) {
+      final distance = Geolocator.distanceBetween(
+        coordinates.latitude,
+        coordinates.longitude,
+        attraction.latitude,
+        attraction.longitude,
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearest = attraction;
+      }
+    }
+
+    if (nearest != null && minDistance <= tapRadiusMeters) {
+      _showAttractionDetails(nearest);
+    }
+  }
+
+  void _showAttractionDetails(Attraction attraction) {
+    final distance = _distanceToAttraction(attraction);
+    final isVisited = _visitedAttractionIds.contains(attraction.id);
+
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  attraction.name,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 8),
+                Text('Category: ${attraction.category}'),
+                Text('Points reward: ${attraction.pointsReward}'),
+                Text(
+                  distance == null
+                      ? 'Distance: unavailable'
+                      : 'Distance: ${_formatDistance(distance)}',
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  attraction.description.isEmpty
+                      ? 'No description available.'
+                      : attraction.description,
+                ),
+                const SizedBox(height: 14),
+                if (isVisited)
+                  const Text(
+                    'Already visited',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  )
+                else
+                  FilledButton.tonal(
+                    onPressed: _markingVisited
+                        ? null
+                        : () async {
+                            Navigator.of(context).pop();
+                            await _markVisited(attraction);
+                          },
+                    child: const Text('Mark as visited'),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _centerOnUser() async {
@@ -434,6 +541,7 @@ class _MapScreenState extends State<MapScreen> {
 
                   return ListTile(
                     dense: true,
+                    onTap: () => _showAttractionDetails(attraction),
                     title: Text(
                       attraction.name,
                       maxLines: 1,
@@ -472,6 +580,29 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text('WroclawGO Map'),
         actions: [
+          PopupMenuButton<_AppDestination>(
+            icon: const Icon(Icons.apps),
+            tooltip: 'Open modules',
+            onSelected: _openDestination,
+            itemBuilder: (context) => const [
+              PopupMenuItem<_AppDestination>(
+                value: _AppDestination.ranking,
+                child: Text('Ranking'),
+              ),
+              PopupMenuItem<_AppDestination>(
+                value: _AppDestination.shop,
+                child: Text('Avatar Shop'),
+              ),
+              PopupMenuItem<_AppDestination>(
+                value: _AppDestination.avatar,
+                child: Text('Avatar Constructor'),
+              ),
+              PopupMenuItem<_AppDestination>(
+                value: _AppDestination.achievements,
+                child: Text('Achievements'),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: _centerOnUser,
             icon: const Icon(Icons.my_location),
@@ -492,6 +623,7 @@ class _MapScreenState extends State<MapScreen> {
               target: _wroclaw,
               zoom: 13,
             ),
+            onMapClick: _onMapClick,
             onMapCreated: (controller) async {
               _mapController = controller;
               await _drawAttractionCircles();

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../core/network/api_exception.dart';
 import '../core/storage/token_storage.dart';
 import '../models/auth_models.dart';
 import '../services/auth_service.dart';
@@ -69,6 +70,38 @@ class AppSession extends ChangeNotifier {
     await _tokenStorage.writeAccessToken(nextAccess);
     notifyListeners();
     return nextAccess;
+  }
+
+  Future<void> reloadCurrentUser() async {
+    _user = await withAuthorizedRequest(
+      (accessToken) => _authService.fetchCurrentUser(accessToken),
+    );
+    notifyListeners();
+  }
+
+  Future<T> withAuthorizedRequest<T>(
+    Future<T> Function(String accessToken) request,
+  ) async {
+    final access = _accessToken;
+    if (access == null) {
+      throw Exception('No access token available');
+    }
+
+    try {
+      return await request(access);
+    } on ApiException catch (err) {
+      if (err.statusCode != 401) {
+        rethrow;
+      }
+
+      try {
+        final refreshed = await refreshAccessToken();
+        return await request(refreshed);
+      } catch (_) {
+        await clearSession();
+        rethrow;
+      }
+    }
   }
 
   Future<void> logout() async {
