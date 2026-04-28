@@ -3,15 +3,16 @@ background,Pink Background,avatars/background/background_pink.png,0,True
 background,Sky Background,avatars/background/background_sky.png,0,True
 background,Sky Clouds Background,avatars/background/background_sky_clouds.png,35,False
 background,Strawberry Background,avatars/background/background_strawberry_pattern.png,45,False
+background,Epic Galaxy Background,avatars/background/background_galaxy.png,100,False
 base,Golden Aura,avatars/base/golden-aura.png,0,True
 base,Sunset Rouge,avatars/base/sunset-rouge.png,40,False
 base,Emerald Haze,avatars/base/emerald-haze.png,55,False
 base,Ocean Glow,avatars/base/ocean-glow.png,65,False
 base,Blush Pink,avatars/base/blush-pink.png,75,False
 base,Midnight Indigo,avatars/base/midnight-indigo.png,90,False
-eyes,Open Eyes,avatars/eyes/open.png,15,False
+eyes,Open Eyes,avatars/eyes/open.png,15,True
 eyes,Wink Eyes,avatars/eyes/wink.png,20,False
-mouth,Basic Mouth,avatars/mouth/mouth_basic.png,12,False
+mouth,Basic Mouth,avatars/mouth/mouth_basic.png,12,True
 mouth,Closed Mouth,avatars/mouth/mouth_closed.png,14,False
 mouth,Smile Mouth,avatars/mouth/mouth_smile.png,18,False
 pants,Brown Shorts,avatars/pants/shorts_brown.png,18,False
