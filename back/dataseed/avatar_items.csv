@@ -1,6 +1,7 @@
 tag,name,svg_path,cost,is_default
 background,Pink Background,avatars/background/background_pink.png,0,True
 background,Sky Background,avatars/background/background_sky.png,0,True
+background,Sunset Background,avatars/background/background_sunset.png,20,False
 background,Sky Clouds Background,avatars/background/background_sky_clouds.png,35,False
 background,Strawberry Background,avatars/background/background_strawberry_pattern.png,45,False
 background,I'm Rich! Background,avatars/background/background_rich.png,100,False
