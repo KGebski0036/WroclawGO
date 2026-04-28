@@ -26,14 +26,5 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
-        run: terraform init -input=false
-
-      - name: Terraform Plan
-        run: terraform plan -input=false -no-color -out=tfplan
-
-      - name: Show Plan (optional)
-        run: terraform show -no-color tfplan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false tfplan
+      - name: Run deploy script
+        run: chmod +x ../deploy.sh && ../deploy.sh
