@@ -34,8 +34,7 @@ log "RDS access restriction:"
 log "  Enter the CIDR that may connect to PostgreSQL port 5432 for maintenance."
 log "  Recommended: your current public IP in the form x.x.x.x/32"
 log "  Leave blank to use the default '0.0.0.0/0' (open — only for demos)."
-read -rp "  admin_cidr [0.0.0.0/0]: " ADMIN_CIDR_INPUT
-ADMIN_CIDR_RAW="${ADMIN_CIDR_INPUT:-0.0.0.0/0}"
+ADMIN_CIDR_RAW="${ADMIN_CIDR:-0.0.0.0/0}"
 ADMIN_CIDR=$(python3 -c "import ipaddress; print(str(ipaddress.ip_network('${ADMIN_CIDR_RAW}', strict=False)))" 2>/dev/null) \
   || fail "'${ADMIN_CIDR_RAW}' is not a valid IPv4 CIDR (e.g. 1.2.3.4/32)"
 log "Using admin_cidr: $ADMIN_CIDR"
