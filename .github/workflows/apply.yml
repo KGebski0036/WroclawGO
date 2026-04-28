@@ -13,88 +13,27 @@ jobs:
   terraform-apply:
     name: "Terraform Apply"
     runs-on: ubuntu-latest
+
     defaults:
       run:
         shell: bash
         working-directory: ./terraform
 
     steps:
-    
-    - name: Checkout Repo
-      uses: actions/checkout@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: 1.2.8
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform Init
-      id: init
-      run: terraform init -input=false 
+      - name: Terraform Init
+        run: terraform init -input=false
 
-    - name: Terraform Plan
-      id: plan
-      continue-on-error: true
-      run: terraform plan -input=false -no-color -out=tfplan && terraform show -no-color tfplan 
+      - name: Terraform Plan
+        run: terraform plan -input=false -no-color -out=tfplan
 
-    - name: Reformat Plan
-      if: steps.plan.outcome == 'success'
-      run: |
-        echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
-        | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt      
-    
-    - name: Put Plan in Env Var
-      if: steps.plan.outcome == 'success'
-      run: |
-        PLAN=$(cat plan.txt)
-        echo "PLAN<<EOF" >> $GITHUB_ENV
-        echo "$PLAN" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV 
+      - name: Show Plan (optional)
+        run: terraform show -no-color tfplan
 
-    - name: Terraform Apply
-      id: apply
-      continue-on-error: true
-      if: steps.plan.outcome == 'success'
-      run: terraform apply -auto-approve -input=false -no-color tfplan
-    
-    - name: Post Plan and Apply to GitHub PR
-      if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
-      uses: mshick/add-pr-comment@v1
-      with:
-        repo-token: ${{ secrets.CUSTOM_PAT }}
-        repo-token-user-login: 'github-actions[bot]'
-        message: |
-          Applying **Infra**:
-          <details><summary>Show Apply</summary>
-          ```
-          ${{ steps.apply.outputs.stdout }}
-          ```
-          </details>
-
-    - name: Post Plan Failure
-      if: steps.plan.outcome == 'failure'
-      uses: mshick/add-pr-comment@v1
-      with:
-        repo-token: ${{ secrets.CUSTOM_PAT }}
-        repo-token-user-login: 'github-actions[bot]'
-        message: |
-          Plan failed for **Infra**:
-          <details><summary>Show Plan Fail</summary>
-          ```
-          ${{ steps.plan.outputs.stderr }}
-          ```
-          </details>
-
-    - name: Post Apply Failure
-      if: steps.apply.outcome == 'failure'
-      uses: mshick/add-pr-comment@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        repo-token-user-login: 'github-actions[bot]'
-        message: |
-          Apply failed for **Infra**:
-          <details><summary>Show Apply Fail</summary>
-          ```
-          ${{ steps.apply.outputs.stderr }}
-          ```
-          </details>
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false tfplan
