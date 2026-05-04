@@ -77,9 +77,6 @@ ACHIEVEMENT_CHECKS = {
 
 
 def check_achievements(user):
-    """
---
-    """
     already_earned_ids = set(
         UserAchievement.objects.filter(user=user).values_list('achievement_id', flat=True)
     )

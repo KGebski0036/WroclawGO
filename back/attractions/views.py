@@ -48,9 +48,6 @@ class UserRankingPagination(PageNumberPagination):
 
 
 class AttractionList(generics.ListAPIView):
-    """
-    Widok zwracający listę wszystkich atrakcji w formacie GeoJSON.
-    """
     queryset = Attraction.objects.all()
     serializer_class = AttractionSerializer
     permission_classes = [permissions.AllowAny]
