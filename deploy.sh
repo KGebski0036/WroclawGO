@@ -127,11 +127,25 @@ ensure_rds_ingress_for_backend() {
   fi
 
   log "Adding missing RDS ingress from backend SG $backend_sg_id to RDS SG $rds_sg_id on port 5432..."
-  aws ec2 authorize-security-group-ingress \
+  local ingress_output
+  local ingress_exit
+  set +e
+  ingress_output=$(aws ec2 authorize-security-group-ingress \
     --region "$AWS_REGION" \
     --group-id "$rds_sg_id" \
     --ip-permissions "[{\"IpProtocol\":\"tcp\",\"FromPort\":5432,\"ToPort\":5432,\"UserIdGroupPairs\":[{\"GroupId\":\"$backend_sg_id\",\"Description\":\"Allow inbound PostgreSQL from backend EC2\"}]}]" \
-    >/dev/null
+    2>&1)
+  ingress_exit=$?
+  set -e
+
+  if [ "$ingress_exit" -ne 0 ]; then
+    if echo "$ingress_output" | grep -q "InvalidPermission.Duplicate"; then
+      log "RDS ingress rule already existed (duplicate), continuing."
+      return 0
+    fi
+    echo "$ingress_output" >&2
+    fail "Failed to add RDS ingress rule for backend SG $backend_sg_id"
+  fi
 }
 
 cleanup_stale_backends() {
