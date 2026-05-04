@@ -1,5 +1,7 @@
-name: 'Terraform Destroy'
+name: 'Nuke & Redeploy'
 
+# One-click workflow: tears down ALL infrastructure then does a clean full deploy.
+# Use this to resolve conflicts caused by stale resources left by previous deployments.
 on:
   workflow_dispatch:
 
@@ -8,12 +10,13 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+  ADMIN_CIDR: "0.0.0.0/0"
+  CLEANUP_STALE_BACKENDS: "true"
 
 jobs:
-  terraform-destroy:
-    name: "Terraform Destroy"
+  destroy:
+    name: "1. Terraform Destroy"
     runs-on: ubuntu-latest
-
     defaults:
       run:
         shell: bash
@@ -39,3 +42,29 @@ jobs:
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -input=false -no-color -var "admin_cidr=0.0.0.0/0"
+
+  deploy:
+    name: "2. Full Deploy"
+    needs: destroy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run deploy script
+        run: chmod +x ./deploy.sh && ./deploy.sh

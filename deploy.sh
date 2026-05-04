@@ -213,18 +213,40 @@ log "Successfully authenticated with AWS."
 AWS_REGION=${AWS_REGION:-${AWS_DEFAULT_REGION:-$(aws configure get region || true)}}
 [ -z "$AWS_REGION" ] && fail "AWS region is not configured. Set AWS_REGION/AWS_DEFAULT_REGION or run 'aws configure'."
 
-log "RDS access restriction:"
-log "  Enter the CIDR that may connect to PostgreSQL port 5432 for maintenance."
-log "  Recommended: your current public IP in the form x.x.x.x/32"
-log "  Leave blank to use the default '0.0.0.0/0' (open — only for demos)."
-ADMIN_CIDR_RAW="${ADMIN_CIDR:-0.0.0.0/0}"
-ADMIN_CIDR=$(python3 -c "import ipaddress; print(str(ipaddress.ip_network('${ADMIN_CIDR_RAW}', strict=False)))" 2>/dev/null) \
-  || fail "'${ADMIN_CIDR_RAW}' is not a valid IPv4 CIDR (e.g. 1.2.3.4/32)"
+# ADMIN_CIDR can be pre-set via environment variable (required for non-interactive CI runs).
+# If not set and running interactively, prompt the user; otherwise default to 0.0.0.0/0.
+if [ -z "${ADMIN_CIDR:-}" ]; then
+  if [ -t 0 ]; then
+    log "RDS access restriction:"
+    log "  Enter the CIDR that may connect to PostgreSQL port 5432 for maintenance."
+    log "  Recommended: your current public IP in the form x.x.x.x/32"
+    log "  Leave blank to use the default '0.0.0.0/0' (open — only for demos)."
+    read -rp "  admin_cidr [0.0.0.0/0]: " ADMIN_CIDR_INPUT
+    ADMIN_CIDR_RAW="${ADMIN_CIDR_INPUT:-0.0.0.0/0}"
+  else
+    log "Non-interactive mode: ADMIN_CIDR not set, defaulting to 0.0.0.0/0"
+    ADMIN_CIDR_RAW="0.0.0.0/0"
+  fi
+  ADMIN_CIDR=$(python3 -c "import ipaddress; print(str(ipaddress.ip_network('${ADMIN_CIDR_RAW}', strict=False)))" 2>/dev/null) \
+    || fail "'${ADMIN_CIDR_RAW}' is not a valid IPv4 CIDR (e.g. 1.2.3.4/32)"
+fi
 log "Using admin_cidr: $ADMIN_CIDR"
 
 log "=== PHASE 1: Initialising Terraform ==="
 cd terraform
-terraform init -upgrade
+
+# When TF_STATE_BUCKET is set (CI), configure the S3 remote backend.
+# Locally, developers can run 'terraform init' manually with their own -backend-config flags.
+if [ -n "${TF_STATE_BUCKET:-}" ]; then
+  terraform init -upgrade \
+    -backend-config="bucket=${TF_STATE_BUCKET}" \
+    -backend-config="key=wroclawgo/terraform.tfstate" \
+    -backend-config="region=${AWS_REGION}" \
+    -backend-config="dynamodb_table=wroclawgo-terraform-locks" \
+    -backend-config="encrypt=true"
+else
+  terraform init -upgrade
+fi
 log "Terraform initialised."
 
 PROJECT_NAME="${TF_VAR_project_name:-wroclawgo}"
